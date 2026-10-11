@@ -219,7 +219,6 @@
     <div class="card-container" id="card-container"></div>
 
     <script>
-        // 画面のパーツ（要素）を取得
         const container = document.getElementById("card-container");
         const tabContainer = document.getElementById("tab-container");
         const ownedCountEl = document.getElementById("owned-count");
@@ -228,15 +227,25 @@
 
         // 📥 過去に保存したセーブデータを読み込む
         const savedOwnedIds = JSON.parse(localStorage.getItem("myCardCollection")) || [];
-
-        // シリーズごとに非表示を切り替えるための「箱のリスト」を覚えておく配列
         const seriesWrappers = [];
 
-        // 📥 エクセルで作ったCSVファイル（cards.csv）を読み込む処理
+        // 📥 cards.csv を読み込む処理
         fetch('cards.csv')
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('ファイルの読み込みに失敗しました');
+                }
+                return response.text();
+            })
             .then(csvText => {
+                // 安全にCSVを解析する
                 const cardData = csvToObjects(csvText);
+                
+                if (cardData.length === 0) {
+                    totalCountEl.textContent = "0";
+                    return;
+                }
+
                 totalCountEl.textContent = cardData.length;
 
                 let currentSeries = "";
@@ -244,30 +253,29 @@
                 let currentWrapper = null;
 
                 cardData.forEach(card => {
+                    // もしデータが壊れていたらスキップ
+                    if (!card.series || !card.id) return;
+
                     // 🔥 新しいシリーズに切り替わったら、見出しと箱を作る
                     if (card.series !== currentSeries) {
                         currentSeries = card.series;
                         
-                        // シリーズごとの「親の透明な箱」を作る（切り替え用）
                         currentWrapper = document.createElement("div");
                         currentWrapper.classList.add("series-group-wrapper");
                         currentWrapper.setAttribute("data-series", currentSeries);
                         container.appendChild(currentWrapper);
                         seriesWrappers.push(currentWrapper);
                         
-                        // シリーズ名のタイトル（見出し）を作る
                         const heading = document.createElement("h2");
                         heading.classList.add("series-title");
                         heading.textContent = currentSeries;
                         currentWrapper.appendChild(heading);
                         
-                        // カードを並べる箱を作る
                         currentGroupContainer = document.createElement("div");
                         currentGroupContainer.classList.add("card-group");
                         currentWrapper.appendChild(currentGroupContainer);
                     }
 
-                    // カードの見た目を作る
                     const cardEl = document.createElement("div");
                     cardEl.classList.add("card");
                     cardEl.setAttribute("data-id", card.id);
@@ -277,7 +285,7 @@
                     }
 
                     cardEl.innerHTML = `
-                        <span class="rarity-badge">${card.rarity}</span>
+                        <span class="rarity-badge">${card.rarity || 'N'}</span>
                         <img src="${card.image}" alt="${card.name}" class="card-img" title="${card.name}">
                     `;
 
@@ -290,37 +298,34 @@
                     currentGroupContainer.appendChild(cardEl);
                 });
 
-                // 🔘 読み込みが終わったら、集まったシリーズ名から「タブボタン」を自動生成する
+                // 🔘 タブボタンを生成
                 createTabs();
-
                 // 最初の所持率を計算
                 styleUpdate();
             })
             .catch(error => {
-                console.error("CSVファイルの読み込みに失敗しました:", error);
+                console.error("CSVエラー:", error);
+                totalCountEl.textContent = "エラー";
             });
 
-        // 🔘 タブボタンを自動で作り出す関数
         function createTabs() {
             const seriesList = seriesWrappers.map(w => w.getAttribute("data-series"));
+            if (seriesList.length === 0) return;
             
-            // 「すべて」表示ボタン
             const allBtn = document.createElement("button");
             allBtn.classList.add("tab-btn", "active");
             allBtn.textContent = "すべて";
             allBtn.addEventListener("click", () => switchTab("すべて", allBtn));
-            tabContainer.appendChild(allBtn);
 
-            // シリーズごとのボタン
-            seriesList.forEach(seriesName => {
-                const btn = document.createElement("button");
+        tabContainer.appendChild(allBtn);
+seriesList.forEach(seriesName => {
+const btn = document.createElement("button");
 btn.classList.add("tab-btn");
 btn.textContent = seriesName;
 btn.addEventListener("click", () => switchTab(seriesName, btn));
 tabContainer.appendChild(btn);
 });
 }
-// 🔄 タブを切り替える関数
 function switchTab(selectedSeries, clickedBtn) {
 document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
 clickedBtn.classList.add("active");
@@ -333,7 +338,6 @@ wrapper.classList.add("hidden");
 }
 });
 }
-// 📤 【セーブ機能】
 function saveData() {
 const ownedCards = document.querySelectorAll(".card.owned");
 const ownedIds = [];
@@ -342,7 +346,6 @@ ownedIds.push(card.getAttribute("data-id"));
 });
 localStorage.setItem("myCardCollection", JSON.stringify(ownedIds));
 }
-// 🧮 【計算機能】
 function styleUpdate() {
 const ownedCount = document.querySelectorAll(".card.owned").length;
 const totalCount = parseInt(totalCountEl.textContent) || 0;
@@ -350,15 +353,18 @@ const percent = Math.round((ownedCount / totalCount) * 100) || 0;
 ownedCountEl.textContent = ownedCount;
 percentageEl.textContent = percent;
 }
-// ⚙️ 【便利関数】どんな改行コードのCSVでも絶対に綺麗に分解する魔法の箱
+// ⚙️ 【最強版】どんなCSV形式（改行、スペース、末尾のゴミ）でも完璧に読み解く分解装置
 function csvToObjects(csvText) {
-// 💡 修正：WindowsやMacのあらゆる改行コード(\r\n や \r)に対応できるように変更
-const lines = csvText.trim().replace(/\r/g, '').split('\n');
-const headers = lines[0].split(',').map(h => h.trim());
+// 文字列を綺麗に掃除して、行ごとに分ける
+const lines = csvText.replace(/\r/g, '').split('\n').map(line => line.trim()).filter(line => line.length > 0);
+if (lines.length < 2) return [];
+// 1行目からヘッダーを取得（スペースを徹底除去）
+const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
 const result = [];
 for (let i = 1; i < lines.length; i++) {
-if (!lines[i]) continue;
 const currentLine = lines[i].split(',').map(v => v.trim());
+// 列の数がヘッダーと合わない場合はスキップ（ゴミデータの排除）
+if (currentLine.length < headers.length) continue;
 const obj = {};
 headers.forEach((header, index) => {
 obj[header] = currentLine[index];
@@ -367,4 +373,3 @@ result.push(obj);
 }
 return result;
 }
-
