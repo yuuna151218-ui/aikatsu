@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>アイカツ！カードリスト</title>
     <style>
+        /* 🎨 CSS：全体の見た目 */
         body { font-family: sans-serif; text-align: center; background-color: #fff0f5; padding: 20px; }
         .counter { font-size: 1.5rem; background-color: white; display: inline-block; padding: 10px 20px; border-radius: 30px; margin-bottom: 25px; font-weight: bold; }
         .card-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        
+        /* 🃏 カードのデザイン */
         .card { width: 100px; height: 140px; background-color: #e0e0e0; border: 3px solid #ccc; border-radius: 10px; cursor: pointer; position: relative; overflow: hidden; opacity: 0.4; filter: grayscale(100%); transition: all 0.2s; }
         .card.owned { opacity: 1; filter: grayscale(0%); border-color: #ff4081; box-shadow: 0 4px 8px rgba(255, 64, 129, 0.4); }
         .card-img { width: 100%; height: 100%; object-fit: cover; }
@@ -18,6 +21,7 @@
 
     <h1>✨ アイカツ！カードリスト ✨</h1>
     
+    <!-- 🔢 所持カウンター -->
     <div class="counter">
         所持： <span id="owned-count">0</span> / <span id="total-count">0</span> 種 (<span id="percentage">0</span>%)
     </div>
@@ -25,46 +29,69 @@
     <div class="card-container" id="card-container"></div>
 
     <script>
-        // 💡 116枚のデータを、CSVを使わずに「4枚だけ」プログラムの中に直接入れました！
-        // ⚠️ 面倒なファイルの読み込みは一切しないので、絶対にエラーが起きません。
-        const cardData = [
-            { id: "1", rarity: "PR", name: "オーロラキスキャミソール", image: "img/1.001.png" },
-            { id: "2", rarity: "PR", name: "オーロラキスドレープスカート", image: "img/1.002.png" },
-            { id: "3", rarity: "PR", name: "オーロラキスバレエシューズ", image: "img/1.003.png" },
-            { id: "4", rarity: "R", name: "オーロラキスリボン", image: "img/1.004.png" }
-        ];
-
         const container = document.getElementById("card-container");
         const ownedCountEl = document.getElementById("owned-count");
         const totalCountEl = document.getElementById("total-count");
         const percentageEl = document.getElementById("percentage");
 
-        totalCountEl.textContent = cardData.length;
         const savedOwnedIds = JSON.parse(localStorage.getItem("myCardCollection")) || [];
 
-        cardData.forEach(card => {
-            const cardEl = document.createElement("div");
-            cardEl.classList.add("card");
-            
-            if (savedOwnedIds.includes(card.id)) {
-                cardEl.classList.add("owned");
-            }
+        // 📥 cards.csv ファイルを読み込む命令
+        fetch('cards.csv')
+            .then(response => {
+                if (!response.ok) throw new Error('CSVが見つかりません');
+                return response.text();
+            })
+            .then(csvText => {
+                // BOM（ゴミ文字）を自動で消去して分解する
+                let cleanText = csvText.replace(/^\ufeff/, '');
+                const lines = cleanText.replace(\(/\r/\)g, '').split('\n').map(line => line.trim()).filter(line => line.length > 0);
+                
+                const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+                const cardData = [];
 
-            cardEl.innerHTML = `
-                <span class="rarity-badge">${card.rarity}</span>
-                <img src="${card.image}" alt="${card.name}" class="card-img" title="${card.name}">
-            `;
+                for (let i = 1; i < lines.length; i++) {
+                    const currentLine = lines[i].split(',').map(v => v.trim());
+                    if (currentLine.length < headers.length) continue;
 
-            cardEl.addEventListener("click", () => {
-                cardEl.classList.toggle("owned");
-                saveData();
-                styleUpdate();
+                    const obj = {};
+                    headers.forEach((header, index) => { obj[header] = currentLine[index]; });
+                    cardData.push(obj);
+                }
+
+                // 画面全体の合計枚数をセット（116）
+                totalCountEl.textContent = cardData.length;
+
+                // 🛠️ 画面にカードを並べる
+                cardData.forEach(card => {
+                    const cardEl = document.createElement("div");
+                    cardEl.classList.add("card");
+                    cardEl.setAttribute("data-id", card.id);
+                    
+                    if (savedOwnedIds.includes(card.id)) {
+                        cardEl.classList.add("owned");
+                    }
+
+                    cardEl.innerHTML = `
+                        <span class="rarity-badge">${card.rarity || 'N'}</span>
+                        <img src="${card.image}" alt="${card.name}" class="card-img" title="${card.name}">
+                    `;
+
+                    cardEl.addEventListener("click", () => {
+                        cardEl.classList.toggle("owned");
+                        saveData();
+                        styleUpdate(cardData.length);
+                    });
+
+                    container.appendChild(cardEl);
+                });
+
+                styleUpdate(cardData.length);
+            })
+            .catch(error => {
+                console.error("エラー:", error);
+                totalCountEl.textContent = "読み込みエラー";
             });
-
-            container.appendChild(cardEl);
-        });
-
-        styleUpdate();
 
         function saveData() {
             const ownedCards = document.querySelectorAll(".card.owned");
@@ -73,9 +100,9 @@
             localStorage.setItem("myCardCollection", JSON.stringify(ownedIds));
         }
 
-        function styleUpdate() {
+        function styleUpdate(totalLength) {
             const ownedCount = document.querySelectorAll(".card.owned").length;
-            const percent = Math.round((ownedCount / cardData.length) * 100) || 0;
+            const percent = Math.round((ownedCount / totalLength) * 100) || 0;
             ownedCountEl.textContent = ownedCount;
             percentageEl.textContent = percent;
         }
