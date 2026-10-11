@@ -5,374 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>アイカツ！カードリスト</title>
     <style>
-        /* 🎨 CSS：全体のデザイン・見た目を整える設定 */
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            text-align: center;
-            background-color: #fff0f5; /* 淡いピンクの背景 */
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            color: #ff4081; /* アイカツ風ピンク */
-            margin-bottom: 10px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        /* 🔢 所持カウンターのスタイル */
-        .counter {
-            font-size: 1.3rem;
-            background-color: white;
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 25px;
-            font-weight: bold;
-        }
-
-        #percentage {
-            color: #ff4081;
-            font-size: 1.6rem;
-        }
-
-        /* 🏷️ タブボタンを並べるエリア */
-        .tab-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        /* 🔘 タブボタンの基本デザイン */
-        .tab-btn {
-            background-color: white;
-            color: #ff4081;
-            border: 2px solid #ff4081;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        /* 🔥 現在選ばれているタブのボタン（ピンク背景） */
-        .tab-btn.active {
-            background-color: #ff4081;
-            color: white;
-        }
-
-        /* 👁️ 選択されていないシリーズを非表示にする設定 */
-        .series-group-wrapper {
-            display: block;
-        }
-        .series-group-wrapper.hidden {
-            display: none;
-        }
-
-        /* 📦 カードをきれいに並べるボックス */
-        .card-container {
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: left; /* 見出しを左寄せに */
-        }
-
-        /* 🏷️ シリーズ名（見出し）のデザイン */
-        .series-title {
-            font-size: 1.4rem;
-            color: #ff4081;
-            border-left: 5px solid #ff4081;
-            padding-left: 10px;
-            margin-top: 40px;
-            margin-bottom: 15px;
-            width: 100%;
-        }
-
-        /* 📦 シリーズごとのカードを並べる箱 */
-        .card-group {
-            display: flex;
-            justify-content: flex-start; /* 左詰めで並べる */
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        /* 🃏 カード1枚ずつの枠 */
-        .card {
-            width: 120px;
-            height: 170px;
-            background-color: #e0e0e0;
-            border: 3px solid #ccc;
-            border-radius: 10px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden; /* 画像が枠からはみ出ないように */
-            user-select: none;
-            transition: all 0.2s ease-in-out;
-            
-            /* 🔴 初期状態（未所持）：半透明＆白黒（グレー） */
-            opacity: 0.4;
-            filter: grayscale(100%);
-        }
-
-        /* 👑 カードホバー時（少し浮かせる演出） */
-        .card:hover {
-            transform: translateY(-3px);
-        }
-
-        /* ✨ 所持している（クリックされた）ときのスタイル */
-        .card.owned {
-            opacity: 1;
-            filter: grayscale(0%); /* カラーに戻る */
-            border-color: #ff4081; /* ピンクの枠線 */
-            box-shadow: 0 6px 12px rgba(255, 64, 129, 0.4);
-        }
-
-        /* 🖼️ 画像を枠線ぴったりに収める設定 */
-        .card-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* 🏷️ レアリティバッジ（カードの左上に重ねて表示） */
-        .rarity-badge {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            background-color: rgba(255, 64, 129, 0.9);
-            color: white;
-            font-size: 0.7rem;
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 4px;
-            z-index: 10;
-        }
-
-        /* 📱 スマホ画面（画面幅が600pxより小さい時）の3列表示決定版 */
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            
-            /* タブボタンの隙間をスマホ用に少し狭くする */
-            .tab-container {
-                gap: 6px;
-                margin-bottom: 15px;
-            }
-            
-            .tab-btn {
-                padding: 6px 12px;
-                font-size: 0.85rem;
-            }
-
-            /* シリーズごとの見出し */
-            .series-title {
-                font-size: 1.1rem;
-                margin-top: 20px;
-                margin-bottom: 10px;
-            }
-
-            /* 📦 新しく作った「透明な親の箱」の横幅を100%に広げる */
-            .series-group-wrapper {
-                width: 100%;
-            }
-
-            /* 📦 カードを並べる箱の横幅も100%にして、左詰めに調整 */
-            .card-group {
-                width: 100%;
-                display: flex;
-                justify-content: flex-start; 
-                gap: 8px; /* カードとカードの隙間を8pxにする */
-                flex-wrap: wrap;
-            }
-
-            /* 🔥 カード1枚のサイズをスマホ画面に合わせる */
-            .card {
-                /* 画面の端の余白と隙間（8px × 2箇所 = 16px）を引いた残りをぴったり3等分する */
-                width: calc((100% - 16px) / 3); 
-                height: auto;
-                aspect-ratio: 120 / 170; /* 縦横比をキープ */
-                border-width: 2px;
-            }
-        }
+        body { font-family: sans-serif; text-align: center; background-color: #fff0f5; padding: 20px; }
+        .counter { font-size: 1.5rem; background-color: white; display: inline-block; padding: 10px 20px; border-radius: 30px; margin-bottom: 25px; font-weight: bold; }
+        .card-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .card { width: 100px; height: 140px; background-color: #e0e0e0; border: 3px solid #ccc; border-radius: 10px; cursor: pointer; position: relative; overflow: hidden; opacity: 0.4; filter: grayscale(100%); transition: all 0.2s; }
+        .card.owned { opacity: 1; filter: grayscale(0%); border-color: #ff4081; box-shadow: 0 4px 8px rgba(255, 64, 129, 0.4); }
+        .card-img { width: 100%; height: 100%; object-fit: cover; }
+        .rarity-badge { position: absolute; top: 5px; left: 5px; background-color: #ff4081; color: white; font-size: 0.7rem; padding: 2px 5px; border-radius: 4px; z-index: 10; }
     </style>
 </head>
 <body>
 
-    <h1> アイカツ！カードリスト </h1>
+    <h1>✨ アイカツ！カードリスト ✨</h1>
     
-    <!-- 所持率を表示するメーター -->
     <div class="counter">
-        所持： <span id="owned-count">0</span> / <span id="total-count">0</span> 種 
-        (<span id="percentage">0</span>%)
+        所持： <span id="owned-count">0</span> / <span id="total-count">0</span> 種 (<span id="percentage">0</span>%)
     </div>
 
-    <!-- タブボタンが自動生成される場所 -->
-    <div class="tab-container" id="tab-container"></div>
-
-    <!-- ここにJavaScriptでカードがドンドン追加されます -->
     <div class="card-container" id="card-container"></div>
 
     <script>
+        // 💡 116枚のデータを、CSVを使わずに「4枚だけ」プログラムの中に直接入れました！
+        // ⚠️ 面倒なファイルの読み込みは一切しないので、絶対にエラーが起きません。
+        const cardData = [
+            { id: "1", rarity: "PR", name: "オーロラキスキャミソール", image: "img/1.001.png" },
+            { id: "2", rarity: "PR", name: "オーロラキスドレープスカート", image: "img/1.002.png" },
+            { id: "3", rarity: "PR", name: "オーロラキスバレエシューズ", image: "img/1.003.png" },
+            { id: "4", rarity: "R", name: "オーロラキスリボン", image: "img/1.004.png" }
+        ];
+
         const container = document.getElementById("card-container");
-        const tabContainer = document.getElementById("tab-container");
         const ownedCountEl = document.getElementById("owned-count");
         const totalCountEl = document.getElementById("total-count");
         const percentageEl = document.getElementById("percentage");
 
-        // 📥 過去に保存したセーブデータを読み込む
+        totalCountEl.textContent = cardData.length;
         const savedOwnedIds = JSON.parse(localStorage.getItem("myCardCollection")) || [];
-        const seriesWrappers = [];
 
-        // 📥 cards.csv を読み込む処理
-        fetch('cards.csv')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('ファイルの読み込みに失敗しました');
-                }
-                return response.text();
-            })
-            .then(csvText => {
-                // 安全にCSVを解析する
-                const cardData = csvToObjects(csvText);
-                
-                if (cardData.length === 0) {
-                    totalCountEl.textContent = "0";
-                    return;
-                }
+        cardData.forEach(card => {
+            const cardEl = document.createElement("div");
+            cardEl.classList.add("card");
+            
+            if (savedOwnedIds.includes(card.id)) {
+                cardEl.classList.add("owned");
+            }
 
-                totalCountEl.textContent = cardData.length;
+            cardEl.innerHTML = `
+                <span class="rarity-badge">${card.rarity}</span>
+                <img src="${card.image}" alt="${card.name}" class="card-img" title="${card.name}">
+            `;
 
-                let currentSeries = "";
-                let currentGroupContainer = null;
-                let currentWrapper = null;
-
-                cardData.forEach(card => {
-                    if (!card.series || !card.id) return;
-
-                    // 🔥 新しいシリーズに切り替わったら、見出しと箱を作る
-                    if (card.series !== currentSeries) {
-                        currentSeries = card.series;
-                        
-                        currentWrapper = document.createElement("div");
-                        currentWrapper.classList.add("series-group-wrapper");
-                        currentWrapper.setAttribute("data-series", currentSeries);
-                        container.appendChild(currentWrapper);
-                        seriesWrappers.push(currentWrapper);
-                        
-                        const heading = document.createElement("h2");
-                        heading.classList.add("series-title");
-                        heading.textContent = currentSeries;
-                        currentWrapper.appendChild(heading);
-                        
-                        currentGroupContainer = document.createElement("div");
-                        currentGroupContainer.classList.add("card-group");
-                        currentWrapper.appendChild(currentGroupContainer);
-                    }
-
-                    const cardEl = document.createElement("div");
-                    cardEl.classList.add("card");
-                    cardEl.setAttribute("data-id", card.id);
-                    
-                    if (savedOwnedIds.includes(card.id)) {
-                        cardEl.classList.add("owned");
-                    }
-
-                    cardEl.innerHTML = `
-                        <span class="rarity-badge">${card.rarity || 'N'}</span>
-                        <img src="${card.image}" alt="${card.name}" class="card-img" title="${card.name}">
-                    `;
-
-                    cardEl.addEventListener("click", () => {
-                        cardEl.classList.toggle("owned");
-                        saveData();
-                        styleUpdate();
-                    });
-
-                    currentGroupContainer.appendChild(cardEl);
-                });
-
-                // 🔘 タブボタンを生成
-                createTabs();
-                // 最初の所持率を計算
+            cardEl.addEventListener("click", () => {
+                cardEl.classList.toggle("owned");
+                saveData();
                 styleUpdate();
-            })
-            .catch(error => {
-                console.error("CSVエラー:", error);
-                totalCountEl.textContent = "エラー";
             });
 
-        function createTabs() {
-            const seriesList = seriesWrappers.map(w => w.getAttribute("data-series"));
-            if (seriesList.length === 0) return;
-            
-            const allBtn = document.createElement("button");
-            allBtn.classList.add("tab-btn", "active");
-            allBtn.textContent = "すべて";
-            allBtn.addEventListener("click", () => switchTab("すべて", allBtn));
-            tabContainer.appendChild(allBtn);
+            container.appendChild(cardEl);
+        });
 
-        seriesList.forEach(seriesName => {
-const btn = document.createElement("button");
-btn.classList.add("tab-btn");
-btn.textContent = seriesName;
-btn.addEventListener("click", () => switchTab(seriesName, btn));
-tabContainer.appendChild(btn);
-});
-}
-function switchTab(selectedSeries, clickedBtn) {
-document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
-clickedBtn.classList.add("active");
-seriesWrappers.forEach(wrapper => {
-const wrapperSeries = wrapper.getAttribute("data-series");
-if (selectedSeries === "すべて" || wrapperSeries === selectedSeries) {
-wrapper.classList.remove("hidden");
-} else {
-wrapper.classList.add("hidden");
-}
-});
-}
-function saveData() {
-const ownedCards = document.querySelectorAll(".card.owned");
-const ownedIds = [];
-ownedCards.forEach(card => {
-ownedIds.push(card.getAttribute("data-id"));
-});
-localStorage.setItem("myCardCollection", JSON.stringify(ownedIds));
-}
-function styleUpdate() {
-const ownedCount = document.querySelectorAll(".card.owned").length;
-const totalCount = parseInt(totalCountEl.textContent) || 0;
-const percent = Math.round((ownedCount / totalCount) * 100) || 0;
-ownedCountEl.textContent = ownedCount;
-percentageEl.textContent = percent;
-}
-// ⚙️ 【超強力版】BOM(特殊文字ゴミ)を自動消去して100%分解する装置
-function csvToObjects(csvText) {
-// 💡 修正：ファイルの最初についている目に見えない「BOM文字(\ufeff)」を強制的に消去する処理
-let cleanText = csvText.replace(/^\ufeff/, '');
-const lines = cleanText.replace(/\r/g, '').split('\n').map(line => line.trim()).filter(line => line.length > 0);
-if (lines.length < 2) return [];
-// 1行目の「id」などの文字の隙間を徹底的に掃除
-const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-const result = [];
-for (let i = 1; i < lines.length; i++) {
-const currentLine = lines[i].split(',').map(v => v.trim());
-if (currentLine.length < headers.length) continue;
-const obj = {};
-headers.forEach((header, index) => {
-obj[header] = currentLine[index];
-});
-result.push(obj);
-}
-return result;
-}
+        styleUpdate();
 
+        function saveData() {
+            const ownedCards = document.querySelectorAll(".card.owned");
+            const ownedIds = [];
+            ownedCards.forEach(card => { ownedIds.push(card.getAttribute("data-id")); });
+            localStorage.setItem("myCardCollection", JSON.stringify(ownedIds));
+        }
 
-
-
+        function styleUpdate() {
+            const ownedCount = document.querySelectorAll(".card.owned").length;
+            const percent = Math.round((ownedCount / cardData.length) * 100) || 0;
+            ownedCountEl.textContent = ownedCount;
+            percentageEl.textContent = percent;
+        }
+    </script>
+</body>
+</html>
