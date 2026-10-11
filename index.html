@@ -95,7 +95,7 @@
         /* 📦 シリーズごとのカードを並べる箱 */
         .card-group {
             display: flex;
-            justify-content: flex-start; /* 左詰目で並べる */
+            justify-content: flex-start; /* 左詰めで並べる */
             gap: 15px;
             flex-wrap: wrap;
             margin-bottom: 20px;
@@ -229,7 +229,6 @@
             .then(csvText => {
                 let cleanText = csvText.replace(/^\ufeff/, '');
                 
-                // 💡 完璧に修理しました！不要な記号を取り除き、あらゆる環境で動く形に直しました
                 const lines = cleanText.replace(/\r/g, '').split('\n').map(line => line.trim()).filter(line => line.length > 0);
                 if (lines.length < 2) return;
 
@@ -309,9 +308,10 @@
             if (seriesList.length === 0) return;
             
             const allBtn = document.createElement("button");
-allBtn.classList.add("tab-btn", "active");
-allBtn.textContent = "すべて";
-allBtn.addEventListener("click", () => switchTab("すべて", allBtn));
+            allBtn.classList.add("tab-btn", "active");
+            allBtn.textContent = "すべて";
+
+        allBtn.addEventListener("click", () => switchTab("すべて", allBtn));
 tabContainer.appendChild(allBtn);
 seriesList.forEach(seriesName => {
 const btn = document.createElement("button");
@@ -345,5 +345,4 @@ const percent = Math.round((ownedCount / totalLength) * 100) || 0;
 ownedCountEl.textContent = ownedCount;
 percentageEl.textContent = percent;
 }
-
 
