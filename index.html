@@ -5,36 +5,220 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>アイカツ！カードリスト</title>
     <style>
-        /* 🎨 CSS：全体の見た目 */
-        body { font-family: sans-serif; text-align: center; background-color: #fff0f5; padding: 20px; }
-        .counter { font-size: 1.5rem; background-color: white; display: inline-block; padding: 10px 20px; border-radius: 30px; margin-bottom: 25px; font-weight: bold; }
-        .card-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        /* 🎨 CSS：全体のデザイン・見た目を整える設定 */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            text-align: center;
+            background-color: #fff0f5; /* 淡いピンクの背景 */
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #ff4081; /* アイカツ風ピンク */
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
         
-        /* 🃏 カードのデザイン */
-        .card { width: 100px; height: 140px; background-color: #e0e0e0; border: 3px solid #ccc; border-radius: 10px; cursor: pointer; position: relative; overflow: hidden; opacity: 0.4; filter: grayscale(100%); transition: all 0.2s; }
-        .card.owned { opacity: 1; filter: grayscale(0%); border-color: #ff4081; box-shadow: 0 4px 8px rgba(255, 64, 129, 0.4); }
-        .card-img { width: 100%; height: 100%; object-fit: cover; }
-        .rarity-badge { position: absolute; top: 5px; left: 5px; background-color: #ff4081; color: white; font-size: 0.7rem; padding: 2px 5px; border-radius: 4px; z-index: 10; }
+        /* 🔢 所持カウンターのスタイル */
+        .counter {
+            font-size: 1.3rem;
+            background-color: white;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        #percentage {
+            color: #ff4081;
+            font-size: 1.6rem;
+        }
+
+        /* 🏷️ タブボタンを並べるエリア */
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* 🔘 タブボタンの基本デザイン */
+        .tab-btn {
+            background-color: white;
+            color: #ff4081;
+            border: 2px solid #ff4081;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        /* 🔥 現在選ばれているタブのボタン（ピンク背景） */
+        .tab-btn.active {
+            background-color: #ff4081;
+            color: white;
+        }
+
+        /* 👁️ 選択されていないシリーズを非表示にする設定 */
+        .series-group-wrapper {
+            display: block;
+        }
+        .series-group-wrapper.hidden {
+            display: none;
+        }
+
+        /* 📦 カードをきれいに並べるボックス */
+        .card-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: left; /* 見出しを左寄せに */
+        }
+
+        /* 🏷️ シリーズ名（見出し）のデザイン */
+        .series-title {
+            font-size: 1.4rem;
+            color: #ff4081;
+            border-left: 5px solid #ff4081;
+            padding-left: 10px;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        /* 📦 シリーズごとのカードを並べる箱 */
+        .card-group {
+            display: flex;
+            justify-content: flex-start; /* 左詰めで並べる */
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        /* 🃏 カード1枚ずつの枠 */
+        .card {
+            width: 120px;
+            height: 170px;
+            background-color: #e0e0e0;
+            border: 3px solid #ccc;
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden; /* 画像が枠からはみ出ないように */
+            user-select: none;
+            transition: all 0.2s ease-in-out;
+            
+            /* 🔴 初期状態（未所持）：半透明＆白黒（グレー） */
+            opacity: 0.4;
+            filter: grayscale(100%);
+        }
+
+        /* 👑 カードホバー時（少し浮かせる演出） */
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        /* ✨ 所持している（クリックされた）ときのスタイル */
+        .card.owned {
+            opacity: 1;
+            filter: grayscale(0%); /* カラーに戻る */
+            border-color: #ff4081; /* ピンクの枠線 */
+            box-shadow: 0 6px 12px rgba(255, 64, 129, 0.4);
+        }
+
+        /* 🖼️ 画像を枠線ぴったりに収める設定 */
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 🏷️ レアリティバッジ（カードの左上に重ねて表示） */
+        .rarity-badge {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background-color: rgba(255, 64, 129, 0.9);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        /* 📱 スマホ画面（画面幅が600pxより小さい時）の3列表示 */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .tab-container {
+                gap: 6px;
+                margin-bottom: 15px;
+            }
+            
+            .tab-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+
+            .series-title {
+                font-size: 1.1rem;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+
+            .series-group-wrapper {
+                width: 100%;
+            }
+
+            .card-group {
+                width: 100%;
+                display: flex;
+                justify-content: flex-start; 
+                gap: 8px; /* カードとカードの隙間を8pxにする */
+                flex-wrap: wrap;
+            }
+
+            .card {
+                /* 画面の端の余白と隙間を引いた残りをぴったり3等分する */
+                width: calc((100% - 16px) / 3); 
+                height: auto;
+                aspect-ratio: 120 / 170; /* 縦横比をキープ */
+                border-width: 2px;
+            }
+        }
     </style>
 </head>
 <body>
 
     <h1>✨ アイカツ！カードリスト ✨</h1>
     
-    <!-- 🔢 所持カウンター -->
     <div class="counter">
         所持： <span id="owned-count">0</span> / <span id="total-count">0</span> 種 (<span id="percentage">0</span>%)
     </div>
+
+    <!-- タブボタンが自動生成される場所 -->
+    <div class="tab-container" id="tab-container"></div>
 
     <div class="card-container" id="card-container"></div>
 
     <script>
         const container = document.getElementById("card-container");
+        const tabContainer = document.getElementById("tab-container");
         const ownedCountEl = document.getElementById("owned-count");
         const totalCountEl = document.getElementById("total-count");
         const percentageEl = document.getElementById("percentage");
 
         const savedOwnedIds = JSON.parse(localStorage.getItem("myCardCollection")) || [];
+        const seriesWrappers = [];
 
         // 📥 cards.csv ファイルを読み込む命令
         fetch('cards.csv')
@@ -43,10 +227,8 @@
                 return response.text();
             })
             .then(csvText => {
-                // 💡 特殊文字のゴミを取り除く処理
                 let cleanText = csvText.replace(/^\ufeff/, '');
                 
-                // 💡 バグの起きていた古い書き方をやめて、最もシンプルで壊れない書き方に変更しました！
                 const lines = cleanText.split('\n');
                 if (lines.length < 2) return;
 
@@ -55,7 +237,7 @@
 
                 for (let i = 1; i < lines.length; i++) {
                     const line = lines[i].trim();
-                    if (!line) continue; // 空っぽの行はスキップ
+                    if (!line) continue;
 
                     const currentLine = line.split(',').map(v => v.trim());
                     if (currentLine.length < headers.length) continue;
@@ -65,11 +247,35 @@
                     cardData.push(obj);
                 }
 
-                // 画面全体の合計枚数をセット（116）
                 totalCountEl.textContent = cardData.length;
 
-                // 🛠️ 画面にカードを並べる
+                let currentSeries = "";
+                let currentGroupContainer = null;
+                let currentWrapper = null;
+
                 cardData.forEach(card => {
+                    if (!card.series || !card.id) return;
+
+                    // 🔥 新しいシリーズに切り替わったら、見出しと箱を作る
+                    if (card.series !== currentSeries) {
+                        currentSeries = card.series;
+                        
+                        currentWrapper = document.createElement("div");
+                        currentWrapper.classList.add("series-group-wrapper");
+                        currentWrapper.setAttribute("data-series", currentSeries);
+                        container.appendChild(currentWrapper);
+                        seriesWrappers.push(currentWrapper);
+                        
+                        const heading = document.createElement("h2");
+                        heading.classList.add("series-title");
+                        heading.textContent = currentSeries;
+                        currentWrapper.appendChild(heading);
+                        
+                        currentGroupContainer = document.createElement("div");
+                        currentGroupContainer.classList.add("card-group");
+                        currentWrapper.appendChild(currentGroupContainer);
+                    }
+
                     const cardEl = document.createElement("div");
                     cardEl.classList.add("card");
                     cardEl.setAttribute("data-id", card.id);
@@ -89,9 +295,10 @@
                         styleUpdate(cardData.length);
                     });
 
-                    container.appendChild(cardEl);
+                    currentGroupContainer.appendChild(cardEl);
                 });
 
+                createTabs();
                 styleUpdate(cardData.length);
             })
             .catch(error => {
@@ -99,19 +306,45 @@
                 totalCountEl.textContent = "読み込みエラー";
             });
 
-        function saveData() {
-            const ownedCards = document.querySelectorAll(".card.owned");
-            const ownedIds = [];
-            ownedCards.forEach(card => { ownedIds.push(card.getAttribute("data-id")); });
-            localStorage.setItem("myCardCollection", JSON.stringify(ownedIds));
-        }
+        function createTabs() {
+            const seriesList = seriesWrappers.map(w => w.getAttribute("data-series"));
+            if (seriesList.length === 0) return;
+            
+            const allBtn = document.createElement("button");
+            allBtn.classList.add("tab-btn", "active");
 
-        function styleUpdate(totalLength) {
-            const ownedCount = document.querySelectorAll(".card.owned").length;
-            const percent = Math.round((ownedCount / totalLength) * 100) || 0;
-            ownedCountEl.textContent = ownedCount;
-            percentageEl.textContent = percent;
-        }
-    </script>
-</body>
-</html>
+        allBtn.textContent = "すべて";
+allBtn.addEventListener("click", () => switchTab("すべて", allBtn));
+tabContainer.appendChild(allBtn);
+seriesList.forEach(seriesName => {
+const btn = document.createElement("button");
+btn.classList.add("tab-btn");
+btn.textContent = seriesName;
+btn.addEventListener("click", () => switchTab(seriesName, btn));
+tabContainer.appendChild(btn);
+});
+}
+function switchTab(selectedSeries, clickedBtn) {
+document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+clickedBtn.classList.add("active");
+seriesWrappers.forEach(wrapper => {
+const wrapperSeries = wrapper.getAttribute("data-series");
+if (selectedSeries === "すべて" || wrapperSeries === selectedSeries) {
+wrapper.classList.remove("hidden");
+} else {
+wrapper.classList.add("hidden");
+}
+});
+}
+function saveData() {
+const ownedCards = document.querySelectorAll(".card.owned");
+const ownedIds = [];
+ownedCards.forEach(card => { ownedIds.push(card.getAttribute("data-id")); });
+localStorage.setItem("myCardCollection", JSON.stringify(ownedIds));
+}
+function styleUpdate(totalLength) {
+const ownedCount = document.querySelectorAll(".card.owned").length;
+const percent = Math.round((ownedCount / totalLength) * 100) || 0;
+ownedCountEl.textContent = ownedCount;
+percentageEl.textContent = percent;
+}
