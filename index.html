@@ -56,21 +56,30 @@
             .then(response => { if (!response.ok) throw new Error('エラー'); return response.text(); })
             .then(csvText => {
                 let cleanText = csvText.replace(/^\ufeff/, '');
-                const lines = cleanText.replace(\(/\r/\)g, '').split('\n').map(line => line.trim()).filter(line => line.length > 0);
+                
+                // 💡 完璧に修理しました！バグの原因だったreplaceを消し、安全なsplit方法に変更
+                const lines = cleanText.split('\n');
                 if (lines.length < 2) return;
+                
                 const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
                 const cardData = [];
+                
                 for (let i = 1; i < lines.length; i++) {
-                    const currentLine = lines[i].split(',').map(v => v.trim());
+                    const line = lines[i].trim();
+                    if (!line) continue;
+                    
+                    const currentLine = line.split(',').map(v => v.trim());
                     if (currentLine.length < headers.length) continue;
                     const obj = {};
                     headers.forEach((header, index) => { obj[header] = currentLine[index]; });
                     cardData.push(obj);
                 }
+                
                 totalCountEl.textContent = cardData.length;
                 let currentSeries = "";
                 let currentGroupContainer = null;
                 let currentWrapper = null;
+                
                 cardData.forEach(card => {
                     if (!card.series || !card.id) return;
                     if (card.series !== currentSeries) {
