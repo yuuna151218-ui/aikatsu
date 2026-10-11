@@ -95,7 +95,7 @@
             width: 100%;
         }
 
-        /* 🃏 パソコンでのカードのサイズ */
+        /* 🃏 パソコンでの基本カードサイズ */
         .card {
             width: 120px;
             height: 170px;
@@ -141,10 +141,10 @@
             z-index: 10;
         }
 
-        /* 📱 スマホ画面（画面幅が600pxより小さい時）の完璧な3列表示 */
+        /* 📱 スマホ画面（幅600px以下）で絶対に3列にする設定 */
         @media (max-width: 600px) {
             body {
-                padding: 10px;
+                padding: 8px; /* 全体の余白を狭くする */
             }
             .tab-container {
                 gap: 6px;
@@ -159,14 +159,18 @@
                 margin-top: 20px;
                 margin-bottom: 10px;
             }
+            
+            /* 💡 箱の隙間を小さくして、カードを左詰めに固定する */
             .card-group {
-                gap: 8px; /* カード同士のすき間を8pxにする */
+                gap: 6px !important;
+                justify-content: flex-start !important;
             }
+            
+            /* 💡 計算式を強力に修正：端の余白とすき間を引いてピッタリ3等分する */
             .card {
-                /* 画面全体の幅からすき間を引いて、ぴったり3等分（3列）にする計算 */
-                width: calc((100% - 16px) / 3);
-                height: auto;
-                aspect-ratio: 120 / 170; /* 縦横の綺麗さを保つ */
+                width: calc((100% - 12px) / 3) !important;
+                height: auto !important;
+                aspect-ratio: 120 / 170 !important;
                 border-width: 2px;
             }
         }
@@ -180,9 +184,7 @@
         所持： <span id="owned-count">0</span> / <span id="total-count">0</span> 種 (<span id="percentage">0</span>%)
     </div>
 
-    <!-- タブボタンが自動生成される場所 -->
     <div class="tab-container" id="tab-container"></div>
-
     <div class="card-container" id="card-container"></div>
 
     <script>
@@ -191,34 +193,29 @@
         const ownedCountEl = document.getElementById("owned-count");
         const totalCountEl = document.getElementById("total-count");
         const percentageEl = document.getElementById("percentage");
-        const savedOwnedIds = JSON.parse(localStorage.getItem("myCardCollection")) || [];
+        
+        let savedOwnedIds = JSON.parse(localStorage.getItem("myCardCollection")) || [];
         const seriesWrappers = [];
 
-        // 📥 cards.csv ファイルを読み込む命令
         fetch('cards.csv')
             .then(response => {
                 if (!response.ok) throw new Error('エラー');
                 return response.text();
             })
             .then(csvText => {
-                // BOM（ゴミ文字）を除去し、改行ごとに分割する最新の安全な書き方
                 let cleanText = csvText.replace(/^\ufeff/, '').trim();
                 const lines = cleanText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
                 if (lines.length < 2) return;
 
-                // 1行目の見出しを取得
                 const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
                 const cardData = [];
 
-                // 2行目以降のカードデータを整理する
                 for (let i = 1; i < lines.length; i++) {
                     const currentLine = lines[i].split(',').map(v => v.trim());
                     if (currentLine.length < headers.length) continue;
 
                     const obj = {};
-                    headers.forEach((header, index) => {
-                        obj[header] = currentLine[index];
-                    });
+                    headers.forEach((header, index) => { obj[header] = currentLine[index]; });
                     cardData.push(obj);
                 }
 
@@ -228,7 +225,6 @@
                 let currentGroupContainer = null;
                 let currentWrapper = null;
 
-                // 画面にカードと見出しを並べる
                 cardData.forEach(card => {
                     if (!card.series || !card.id) return;
 
@@ -277,7 +273,6 @@
                 styleUpdate(cardData.length);
             });
 
-        // 🔘 タブボタンを自動作成する関数
         function createTabs() {
             const seriesList = seriesWrappers.map(w => w.getAttribute("data-series"));
             const allBtn = document.createElement("button");
@@ -295,7 +290,6 @@
             });
         }
 
-        // 🔄 タブ表示を切り替える関数
         function switchTab(selected, clickedBtn) {
             document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
             clickedBtn.classList.add("active");
@@ -304,13 +298,14 @@
                 if (selected === "すべて" || wrapper.getAttribute("data-series") === selected) {
                     wrapper.classList.remove("hidden");
                 } else {
-wrapper.classList.add("hidden");
-}
-});
-}
-// 📤 セーブ保存する関数
-function saveData() {
-const owned = [];
+                    wrapper.classList.add("hidden");
+                }
+            });
+        }
+
+        // 📤 セーブ保存する関数
+        function saveData() {
+            const owned = [];
 document.querySelectorAll(".card.owned").forEach(card => {
 owned.push(card.getAttribute("data-id"));
 });
