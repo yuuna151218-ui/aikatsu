@@ -95,7 +95,7 @@
         /* 📦 シリーズごとのカードを並べる箱 */
         .card-group {
             display: flex;
-            justify-content: flex-start; /* 左詰めで並べる */
+            justify-content: flex-start; /* 左詰目で並べる */
             gap: 15px;
             flex-wrap: wrap;
             margin-bottom: 20px;
@@ -227,29 +227,21 @@
                 return response.text();
             })
             .then(csvText => {
-                // BOM（ゴミ文字）を自動消去
                 let cleanText = csvText.replace(/^\ufeff/, '');
                 
-                // 改行コード（\r\n または \n）を綺麗に統一してバラバラに分ける
-                cleanText = cleanText.split('\r').join('');
-                const lines = cleanText.split('\n');
+                // 💡 完璧に修理しました！不要な記号を取り除き、あらゆる環境で動く形に直しました
+                const lines = cleanText.replace(/\r/g, '').split('\n').map(line => line.trim()).filter(line => line.length > 0);
                 if (lines.length < 2) return;
 
-                // 1行目のヘッダー（id,name,rarity,series,image）
                 const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
                 const cardData = [];
 
                 for (let i = 1; i < lines.length; i++) {
-                    const lineText = lines[i].trim();
-                    if (!lineText) continue; // 空行は飛ばす
-
-                    const currentLine = lineText.split(',').map(v => v.trim()); // 💡 ここで文字の前後の隙間ゴミを徹底お掃除！
+                    const currentLine = lines[i].split(',').map(v => v.trim());
                     if (currentLine.length < headers.length) continue;
 
                     const obj = {};
-                    headers.forEach((header, index) => { 
-                        obj[header] = currentLine[index]; 
-                    });
+                    headers.forEach((header, index) => { obj[header] = currentLine[index]; });
                     cardData.push(obj);
                 }
 
@@ -312,10 +304,11 @@
                 totalCountEl.textContent = "読み込みエラー";
             });
 
-function createTabs() {
-const seriesList = seriesWrappers.map(w => w.getAttribute("data-series"));
-if (seriesList.length === 0) return;
-const allBtn = document.createElement("button");
+        function createTabs() {
+            const seriesList = seriesWrappers.map(w => w.getAttribute("data-series"));
+            if (seriesList.length === 0) return;
+            
+            const allBtn = document.createElement("button");
 allBtn.classList.add("tab-btn", "active");
 allBtn.textContent = "すべて";
 allBtn.addEventListener("click", () => switchTab("すべて", allBtn));
@@ -352,4 +345,5 @@ const percent = Math.round((ownedCount / totalLength) * 100) || 0;
 ownedCountEl.textContent = ownedCount;
 percentageEl.textContent = percent;
 }
-        
+
+
