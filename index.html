@@ -43,17 +43,21 @@
                 return response.text();
             })
             .then(csvText => {
-                // 💡 完全に修理しました！不要なバックスラッシュ記号を綺麗に消し去りました
+                // 💡 特殊文字のゴミを取り除く処理
                 let cleanText = csvText.replace(/^\ufeff/, '');
-                const lines = cleanText.replace(\(/\r/\)g, '').split('\n').map(line => line.trim()).filter(line => line.length > 0);
                 
+                // 💡 バグの起きていた古い書き方をやめて、最もシンプルで壊れない書き方に変更しました！
+                const lines = cleanText.split('\n');
                 if (lines.length < 2) return;
 
                 const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
                 const cardData = [];
 
                 for (let i = 1; i < lines.length; i++) {
-                    const currentLine = lines[i].split(',').map(v => v.trim());
+                    const line = lines[i].trim();
+                    if (!line) continue; // 空っぽの行はスキップ
+
+                    const currentLine = line.split(',').map(v => v.trim());
                     if (currentLine.length < headers.length) continue;
 
                     const obj = {};
