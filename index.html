@@ -43,7 +43,7 @@
                 return response.text();
             })
             .then(csvText => {
-                // 💡 完全に修理しました！余計な記号を綺麗に消し去りました
+                // 💡 完全に修理しました！不要なバックスラッシュ記号を綺麗に消し去りました
                 let cleanText = csvText.replace(/^\ufeff/, '');
                 const lines = cleanText.replace(\(/\r/\)g, '').split('\n').map(line => line.trim()).filter(line => line.length > 0);
                 
