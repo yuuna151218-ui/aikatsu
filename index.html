@@ -313,4 +313,56 @@
 
             // シリーズごとのボタン
             seriesList.forEach(seriesName => {
-                const btn = document.createElement("button");
+                const btn = document.createElement("button");btn.classList.add("tab-btn");
+btn.textContent = seriesName;
+btn.addEventListener("click", () => switchTab(seriesName, btn));
+tabContainer.appendChild(btn);
+});
+}
+// 🔄 タブを切り替える関数
+function switchTab(selectedSeries, clickedBtn) {
+document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+clickedBtn.classList.add("active");
+seriesWrappers.forEach(wrapper => {
+const wrapperSeries = wrapper.getAttribute("data-series");
+if (selectedSeries === "すべて" || wrapperSeries === selectedSeries) {
+wrapper.classList.remove("hidden");
+} else {
+wrapper.classList.add("hidden");
+}
+});
+}
+// 📤 【セーブ機能】
+function saveData() {
+const ownedCards = document.querySelectorAll(".card.owned");
+const ownedIds = [];
+ownedCards.forEach(card => {
+ownedIds.push(card.getAttribute("data-id"));
+});
+localStorage.setItem("myCardCollection", JSON.stringify(ownedIds));
+}
+// 🧮 【計算機能】
+function styleUpdate() {
+const ownedCount = document.querySelectorAll(".card.owned").length;
+const totalCount = parseInt(totalCountEl.textContent) || 0;
+const percent = Math.round((ownedCount / totalCount) * 100) || 0;
+ownedCountEl.textContent = ownedCount;
+percentageEl.textContent = percent;
+}
+// ⚙️ 【便利関数】CSVをオブジェクトに変換
+function csvToObjects(csvText) {
+const lines = csvText.trim().split('\n');
+const headers = lines[0].split(',').map(h => h.trim());
+const result = [];
+for (let i = 1; i < lines.length; i++) {
+if (!lines[i]) continue;
+const currentLine = lines[i].split(',').map(v => v.trim());
+const obj = {};
+headers.forEach((header, index) => {
+obj[header] = currentLine[index];
+});
+result.push(obj);
+}
+return result;
+}
+
