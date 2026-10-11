@@ -57,7 +57,7 @@
             .then(csvText => {
                 let cleanText = csvText.replace(/^\ufeff/, '');
                 
-                // 💡 完璧に修理しました！バグの原因だったreplaceを消し、安全なsplit方法に変更
+                // 💡 完璧に修理：バグの原因だった不要な記号を消し、安全な文字の分け方に変更しました
                 const lines = cleanText.split('\n');
                 if (lines.length < 2) return;
                 
