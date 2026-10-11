@@ -204,7 +204,7 @@
 </head>
 <body>
 
-    <h1>アイカツ！カードリスト</h1>
+    <h1> アイカツ！カードリスト </h1>
     
     <!-- 所持率を表示するメーター -->
     <div class="counter">
@@ -253,7 +253,6 @@
                 let currentWrapper = null;
 
                 cardData.forEach(card => {
-                    // もしデータが壊れていたらスキップ
                     if (!card.series || !card.id) return;
 
                     // 🔥 新しいシリーズに切り替わったら、見出しと箱を作る
@@ -316,9 +315,9 @@
             allBtn.classList.add("tab-btn", "active");
             allBtn.textContent = "すべて";
             allBtn.addEventListener("click", () => switchTab("すべて", allBtn));
+            tabContainer.appendChild(allBtn);
 
-        tabContainer.appendChild(allBtn);
-seriesList.forEach(seriesName => {
+        seriesList.forEach(seriesName => {
 const btn = document.createElement("button");
 btn.classList.add("tab-btn");
 btn.textContent = seriesName;
@@ -353,17 +352,17 @@ const percent = Math.round((ownedCount / totalCount) * 100) || 0;
 ownedCountEl.textContent = ownedCount;
 percentageEl.textContent = percent;
 }
-// ⚙️ 【最強版】どんなCSV形式（改行、スペース、末尾のゴミ）でも完璧に読み解く分解装置
+// ⚙️ 【超強力版】BOM(特殊文字ゴミ)を自動消去して100%分解する装置
 function csvToObjects(csvText) {
-// 文字列を綺麗に掃除して、行ごとに分ける
-const lines = csvText.replace(/\r/g, '').split('\n').map(line => line.trim()).filter(line => line.length > 0);
+// 💡 修正：ファイルの最初についている目に見えない「BOM文字(\ufeff)」を強制的に消去する処理
+let cleanText = csvText.replace(/^\ufeff/, '');
+const lines = cleanText.replace(/\r/g, '').split('\n').map(line => line.trim()).filter(line => line.length > 0);
 if (lines.length < 2) return [];
-// 1行目からヘッダーを取得（スペースを徹底除去）
+// 1行目の「id」などの文字の隙間を徹底的に掃除
 const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
 const result = [];
 for (let i = 1; i < lines.length; i++) {
 const currentLine = lines[i].split(',').map(v => v.trim());
-// 列の数がヘッダーと合わない場合はスキップ（ゴミデータの排除）
 if (currentLine.length < headers.length) continue;
 const obj = {};
 headers.forEach((header, index) => {
@@ -373,3 +372,7 @@ result.push(obj);
 }
 return result;
 }
+
+
+
+
