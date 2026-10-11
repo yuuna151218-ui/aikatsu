@@ -39,17 +39,69 @@
             font-size: 1.6rem;
         }
 
-        /* 📦 カードをきれいに並べるボックス */
-        .card-container {
+        /* 🏷️ タブボタンを並べるエリア */
+        .tab-container {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 10px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
-            max-width: 800px;
-            margin: 0 auto;
         }
 
-        /* 🃏 カード1枚ずつの枠枠 */
+        /* 🔘 タブボタンの基本デザイン */
+        .tab-btn {
+            background-color: white;
+            color: #ff4081;
+            border: 2px solid #ff4081;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        /* 🔥 現在選ばれているタブのボタン（ピンク背景） */
+        .tab-btn.active {
+            background-color: #ff4081;
+            color: white;
+        }
+
+        /* 👁️ 選択されていないシリーズを非表示にする設定 */
+        .series-group-wrapper {
+            display: block;
+        }
+        .series-group-wrapper.hidden {
+            display: none;
+        }
+
+        /* 📦 カードをきれいに並べるボックス */
+        .card-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: left; /* 見出しを左寄せに */
+        }
+
+        /* 🏷️ シリーズ名（見出し）のデザイン */
+        .series-title {
+            font-size: 1.4rem;
+            color: #ff4081;
+            border-left: 5px solid #ff4081;
+            padding-left: 10px;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        /* 📦 シリーズごとのカードを並べる箱 */
+        .card-group {
+            display: flex;
+            justify-content: flex-start; /* 左詰目で並べる */
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        /* 🃏 カード1枚ずつの枠 */
         .card {
             width: 120px;
             height: 170px;
@@ -101,121 +153,58 @@
             z-index: 10;
         }
 
-/* 📦 全体のコンテナ（flexを解除して縦並びにします） */
-.card-container {
-    max-width: 900px;
-    margin: 0 auto;
-    text-align: left; /* 見出しを左寄せに */
-}
+        /* 📱 スマホ画面（画面幅が600pxより小さい時）の3列表示決定版 */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            /* タブボタンの隙間をスマホ用に少し狭くする */
+            .tab-container {
+                gap: 6px;
+                margin-bottom: 15px;
+            }
+            
+            .tab-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
 
-/* 🏷️ 新しく追加：シリーズ名（見出し）のデザイン */
-.series-title {
-    font-size: 1.4rem;
-    color: #ff4081;
-    border-left: 5px solid #ff4081;
-    padding-left: 10px;
-    margin-top: 40px;
-    margin-bottom: 15px;
-    width: 100%;
-}
+            /* シリーズごとの見出し */
+            .series-title {
+                font-size: 1.1rem;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
 
-/* 📦 新しく追加：シリーズごとのカードを並べる箱 */
-.card-group {
-    display: flex;
-    justify-content: flex-start; /* 左詰めで並べる */
-    gap: 15px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-}
-        
-/* 📱 スマホ画面（画面幅が600pxより小さい時）の3列表示決定版 */
-@media (max-width: 600px) {
-    body {
-        padding: 10px;
-    }
-    
-    /* タブボタンの隙間をスマホ用に少し狭くする */
-    .tab-container {
-        gap: 6px;
-        margin-bottom: 15px;
-    }
-    
-    .tab-btn {
-        padding: 6px 12px;
-        font-size: 0.85rem;
-    }
+            /* 📦 新しく作った「透明な親の箱」の横幅を100%に広げる */
+            .series-group-wrapper {
+                width: 100%;
+            }
 
-    /* シリーズごとの見出し */
-    .series-title {
-        font-size: 1.1rem;
-        margin-top: 20px;
-        margin-bottom: 10px;
-    }
+            /* 📦 カードを並べる箱の横幅も100%にして、左詰めに調整 */
+            .card-group {
+                width: 100%;
+                display: flex;
+                justify-content: flex-start; 
+                gap: 8px; /* カードとカードの隙間を8pxにする */
+                flex-wrap: wrap;
+            }
 
-    /* 📦 ここがポイント：新しく作った「透明な親の箱」の横幅を100%に広げる */
-    .series-group-wrapper {
-        width: 100%;
-    }
-
-    /* 📦 カードを並べる箱の横幅も100%にして、左詰めに調整 */
-    .card-group {
-        width: 100%;
-        display: flex;
-        justify-content: flex-start; 
-        gap: 8px; /* カードとカードの隙間を8pxにする */
-        flex-wrap: wrap;
-    }
-
-    /* 🔥 カード1枚のサイズをスマホ画面に合わせる */
-    .card {
-        /* 画面の端の余白と隙間（8px × 2箇所 = 16px）を引いた残りをぴったり3等分する */
-        width: calc((100% - 16px) / 3); 
-        height: auto;
-        aspect-ratio: 120 / 170; /* 縦横比をキープ */
-        border-width: 2px;
-    }
-    
-/* 🏷️ タブボタンを並べるエリア */
-.tab-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
-
-/* 🔘 タブボタンの基本デザイン */
-.tab-btn {
-    background-color: white;
-    color: #ff4081;
-    border: 2px solid #ff4081;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-/* 🔥 現在選ばれているタブのボタン（ピンク背景） */
-.tab-btn.active {
-    background-color: #ff4081;
-    color: white;
-}
-
-/* 👁️ 選択されていないシリーズを非表示にする設定 */
-.series-group-wrapper {
-    display: block;
-}
-.series-group-wrapper.hidden {
-    display: none;
-}
-
-
+            /* 🔥 カード1枚のサイズをスマホ画面に合わせる */
+            .card {
+                /* 画面の端の余白と隙間（8px × 2箇所 = 16px）を引いた残りをぴったり3等分する */
+                width: calc((100% - 16px) / 3); 
+                height: auto;
+                aspect-ratio: 120 / 170; /* 縦横比をキープ */
+                border-width: 2px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <h1>アイカツ！カードリスト</h1>
+    <h1>✨ アイカツ！カードリスト ✨</h1>
     
     <!-- 所持率を表示するメーター -->
     <div class="counter">
@@ -223,172 +212,105 @@
         (<span id="percentage">0</span>%)
     </div>
 
-    <!-- 💡 ここに新しく追加：タブボタンが自動生成される場所 -->
+    <!-- タブボタンが自動生成される場所 -->
     <div class="tab-container" id="tab-container"></div>
 
     <!-- ここにJavaScriptでカードがドンドン追加されます -->
     <div class="card-container" id="card-container"></div>
 
     <script>
-// 画面のパーツ（要素）を取得
-const container = document.getElementById("card-container");
-const tabContainer = document.getElementById("tab-container"); // 💡タブ用
-const ownedCountEl = document.getElementById("owned-count");
-const totalCountEl = document.getElementById("total-count");
-const percentageEl = document.getElementById("percentage");
+        // 画面のパーツ（要素）を取得
+        const container = document.getElementById("card-container");
+        const tabContainer = document.getElementById("tab-container");
+        const ownedCountEl = document.getElementById("owned-count");
+        const totalCountEl = document.getElementById("total-count");
+        const percentageEl = document.getElementById("percentage");
 
-// 📥 過去に保存したセーブデータを読み込む
-const savedOwnedIds = JSON.parse(localStorage.getItem("myCardCollection")) || [];
+        // 📥 過去に保存したセーブデータを読み込む
+        const savedOwnedIds = JSON.parse(localStorage.getItem("myCardCollection")) || [];
 
-// シリーズごとに非表示を切り替えるための「箱のリスト」を覚えておく配列
-const seriesWrappers = [];
+        // シリーズごとに非表示を切り替えるための「箱のリスト」を覚えておく配列
+        const seriesWrappers = [];
 
-// 📥 エクセルで作ったCSVファイル（cards.csv）を読み込む処理
-fetch('cards.csv')
-    .then(response => response.text())
-    .then(csvText => {
-        const cardData = csvToObjects(csvText);
-        totalCountEl.textContent = cardData.length;
+        // 📥 エクセルで作ったCSVファイル（cards.csv）を読み込む処理
+        fetch('cards.csv')
+            .then(response => response.text())
+            .then(csvText => {
+                const cardData = csvToObjects(csvText);
+                totalCountEl.textContent = cardData.length;
 
-        let currentSeries = "";
-        let currentGroupContainer = null;
-        let currentWrapper = null;
+                let currentSeries = "";
+                let currentGroupContainer = null;
+                let currentWrapper = null;
 
-        cardData.forEach(card => {
-            // 🔥 新しいシリーズに切り替わったら、見出しと箱を作る
-            if (card.series !== currentSeries) {
-                currentSeries = card.series;
-                
-                // シリーズごとの「親の透明な箱」を作る（切り替え用）
-                currentWrapper = document.createElement("div");
-                currentWrapper.classList.add("series-group-wrapper");
-                currentWrapper.setAttribute("data-series", currentSeries);
-                container.appendChild(currentWrapper);
-                seriesWrappers.push(currentWrapper);
-                
-                // シリーズ名のタイトル（見出し）を作る
-                const heading = document.createElement("h2");
-                heading.classList.add("series-title");
-                heading.textContent = currentSeries;
-                currentWrapper.appendChild(heading);
-                
-                // カードを並べる箱を作る
-                currentGroupContainer = document.createElement("div");
-                currentGroupContainer.classList.add("card-group");
-                currentWrapper.appendChild(currentGroupContainer);
-            }
+                cardData.forEach(card => {
+                    // 🔥 新しいシリーズに切り替わったら、見出しと箱を作る
+                    if (card.series !== currentSeries) {
+                        currentSeries = card.series;
+                        
+                        // シリーズごとの「親の透明な箱」を作る（切り替え用）
+                        currentWrapper = document.createElement("div");
+                        currentWrapper.classList.add("series-group-wrapper");
+                        currentWrapper.setAttribute("data-series", currentSeries);
+                        container.appendChild(currentWrapper);
+                        seriesWrappers.push(currentWrapper);
+                        
+                        // シリーズ名のタイトル（見出し）を作る
+                        const heading = document.createElement("h2");
+                        heading.classList.add("series-title");
+                        heading.textContent = currentSeries;
+                        currentWrapper.appendChild(heading);
+                        
+                        // カードを並べる箱を作る
+                        currentGroupContainer = document.createElement("div");
+                        currentGroupContainer.classList.add("card-group");
+                        currentWrapper.appendChild(currentGroupContainer);
+                    }
 
-            // カードの見た目を作る
-            const cardEl = document.createElement("div");
-            cardEl.classList.add("card");
-            cardEl.setAttribute("data-id", card.id);
-            
-            if (savedOwnedIds.includes(card.id)) {
-                cardEl.classList.add("owned");
-            }
+                    // カードの見た目を作る
+                    const cardEl = document.createElement("div");
+                    cardEl.classList.add("card");
+                    cardEl.setAttribute("data-id", card.id);
+                    
+                    if (savedOwnedIds.includes(card.id)) {
+                        cardEl.classList.add("owned");
+                    }
 
-            cardEl.innerHTML = `
-                <span class="rarity-badge">${card.rarity}</span>
-                <img src="${card.image}" alt="${card.name}" class="card-img" title="${card.name}">
-            `;
+                    cardEl.innerHTML = `
+                        <span class="rarity-badge">${card.rarity}</span>
+                        <img src="${card.image}" alt="${card.name}" class="card-img" title="${card.name}">
+                    `;
 
-            cardEl.addEventListener("click", () => {
-                cardEl.classList.toggle("owned");
-                saveData();
+                    cardEl.addEventListener("click", () => {
+                        cardEl.classList.toggle("owned");
+                        saveData();
+                        styleUpdate();
+                    });
+
+                    currentGroupContainer.appendChild(cardEl);
+                });
+
+                // 🔘 読み込みが終わったら、集まったシリーズ名から「タブボタン」を自動生成する
+                createTabs();
+
+                // 最初の所持率を計算
                 styleUpdate();
+            })
+            .catch(error => {
+                console.error("CSVファイルの読み込みに失敗しました:", error);
             });
 
-            currentGroupContainer.appendChild(cardEl);
-        });
+        // 🔘 タブボタンを自動で作り出す関数
+        function createTabs() {
+            const seriesList = seriesWrappers.map(w => w.getAttribute("data-series"));
+            
+            // 「すべて」表示ボタン
+            const allBtn = document.createElement("button");
+            allBtn.classList.add("tab-btn", "active");
+            allBtn.textContent = "すべて";
+            allBtn.addEventListener("click", () => switchTab("すべて", allBtn));
+            tabContainer.appendChild(allBtn);
 
-        // 🔘 読み込みが終わったら、集まったシリーズ名から「タブボタン」を自動生成する
-        createTabs();
-
-        // 最初の所持率を計算
-        styleUpdate();
-    })
-    .catch(error => {
-        console.error("CSVファイルの読み込みに失敗しました:", error);
-    });
-
-// 🔘 タブボタンを自動で作り出す関数
-function createTabs() {
-    // 登録されているすべてのシリーズ名（重複なし）を取得
-    const seriesList = seriesWrappers.map(w => w.getAttribute("data-series"));
-    
-    // 「すべて」表示ボタンを作る
-    const allBtn = document.createElement("button");
-    allBtn.classList.add("tab-btn", "active");
-    allBtn.textContent = "すべて";
-    allBtn.addEventListener("click", () => switchTab("すべて", allBtn));
-    tabContainer.appendChild(allBtn);
-
-    // シリーズごとのボタンを作る
-    seriesList.forEach(seriesName => {
-        const btn = document.createElement("button");
-        btn.classList.add("tab-btn");
-        btn.textContent = seriesName;
-        btn.addEventListener("click", () => switchTab(seriesName, btn));
-        tabContainer.appendChild(btn);
-    });
-}
-
-// 🔄 タブを切り替える（表示・非表示にする）関数
-function switchTab(selectedSeries, clickedBtn) {
-    // すべてのボタンから「active」クラス（ピンク背景）を消す
-    document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
-    // クリックされたボタンだけに「active」をつける
-    clickedBtn.classList.add("active");
-
-    // 選んだシリーズ以外の箱に「hidden（非表示）」クラスをつける
-    seriesWrappers.forEach(wrapper => {
-        const wrapperSeries = wrapper.getAttribute("data-series");
-        if (selectedSeries === "すべて" || wrapperSeries === selectedSeries) {
-            wrapper.classList.remove("hidden"); // 見せる
-        } else {
-            wrapper.classList.add("hidden");    // 隠す
-        }
-    });
-}
-
-// 📤 【セーブ機能】
-function saveData() {
-    const ownedCards = document.querySelectorAll(".card.owned");
-    const ownedIds = [];
-    ownedCards.forEach(card => {
-        ownedIds.push(card.getAttribute("data-id"));
-    });
-    localStorage.setItem("myCardCollection", JSON.stringify(ownedIds));
-}
-
-// 🧮 【計算機能】
-function styleUpdate() {
-    const ownedCount = document.querySelectorAll(".card.owned").length;
-    const totalCount = parseInt(totalCountEl.textContent) || 0;
-    const percent = Math.round((ownedCount / totalCount) * 100) || 0;
-
-    ownedCountEl.textContent = ownedCount;
-    percentageEl.textContent = percent;
-}
-
-// ⚙️ 【便利関数】CSVをオブジェクトに変換
-function csvToObjects(csvText) {
-    const lines = csvText.trim().split('\n');
-    const headers = lines[0].split(',').map(h => h.trim());
-    const result = [];
-
-    for (let i = 1; i < lines.length; i++) {
-        if (!lines[i]) continue;
-        const currentLine = lines[i].split(',').map(v => v.trim());
-        const obj = {};
-        headers.forEach((header, index) => {
-            obj[header] = currentLine[index];
-        });
-        result.push(obj);
-    }
-    return result;
-}
-
-    </script>
-</body>
-</html>
+            // シリーズごとのボタン
+            seriesList.forEach(seriesName => {
+                const btn = document.createElement("button");
