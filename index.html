@@ -227,23 +227,29 @@
                 return response.text();
             })
             .then(csvText => {
+                // BOM（ゴミ文字）を自動消去
                 let cleanText = csvText.replace(/^\ufeff/, '');
                 
+                // 改行コード（\r\n または \n）を綺麗に統一してバラバラに分ける
+                cleanText = cleanText.split('\r').join('');
                 const lines = cleanText.split('\n');
                 if (lines.length < 2) return;
 
+                // 1行目のヘッダー（id,name,rarity,series,image）
                 const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
                 const cardData = [];
 
                 for (let i = 1; i < lines.length; i++) {
-                    const line = lines[i].trim();
-                    if (!line) continue;
+                    const lineText = lines[i].trim();
+                    if (!lineText) continue; // 空行は飛ばす
 
-                    const currentLine = line.split(',').map(v => v.trim());
+                    const currentLine = lineText.split(',').map(v => v.trim()); // 💡 ここで文字の前後の隙間ゴミを徹底お掃除！
                     if (currentLine.length < headers.length) continue;
 
                     const obj = {};
-                    headers.forEach((header, index) => { obj[header] = currentLine[index]; });
+                    headers.forEach((header, index) => { 
+                        obj[header] = currentLine[index]; 
+                    });
                     cardData.push(obj);
                 }
 
@@ -306,14 +312,12 @@
                 totalCountEl.textContent = "読み込みエラー";
             });
 
-        function createTabs() {
-            const seriesList = seriesWrappers.map(w => w.getAttribute("data-series"));
-            if (seriesList.length === 0) return;
-            
-            const allBtn = document.createElement("button");
-            allBtn.classList.add("tab-btn", "active");
-
-        allBtn.textContent = "すべて";
+function createTabs() {
+const seriesList = seriesWrappers.map(w => w.getAttribute("data-series"));
+if (seriesList.length === 0) return;
+const allBtn = document.createElement("button");
+allBtn.classList.add("tab-btn", "active");
+allBtn.textContent = "すべて";
 allBtn.addEventListener("click", () => switchTab("すべて", allBtn));
 tabContainer.appendChild(allBtn);
 seriesList.forEach(seriesName => {
@@ -348,3 +352,4 @@ const percent = Math.round((ownedCount / totalLength) * 100) || 0;
 ownedCountEl.textContent = ownedCount;
 percentageEl.textContent = percent;
 }
+        
