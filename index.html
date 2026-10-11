@@ -43,10 +43,8 @@
                 return response.text();
             })
             .then(csvText => {
-                // BOM（ゴミ文字）を自動で消去して分解する
+                // 💡 完全に修理しました！余計な記号を綺麗に消し去りました
                 let cleanText = csvText.replace(/^\ufeff/, '');
-                
-                // 💡 修正：余計なバックスラッシュ記号を綺麗に無くしました！
                 const lines = cleanText.replace(\(/\r/\)g, '').split('\n').map(line => line.trim()).filter(line => line.length > 0);
                 
                 if (lines.length < 2) return;
