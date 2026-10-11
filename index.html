@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アイカツ！カードリスト</title>
+    <style>
+        /* 🎨 CSS：全体のデザイン・見た目を整える設定 */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            text-align: center;
+            background-color: #fff0f5; /* 淡いピンクの背景 */
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #ff4081; /* アイカツ風ピンク */
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        /* 🔢 所持カウンターのスタイル */
+        .counter {
+            font-size: 1.3rem;
+            background-color: white;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        #percentage {
+            color: #ff4081;
+            font-size: 1.6rem;
+        }
+
+        /* 📦 カードをきれいに並べるボックス */
+        .card-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* 🃏 カード1枚ずつの枠枠 */
+        .card {
+            width: 120px;
+            height: 170px;
+            background-color: #e0e0e0;
+            border: 3px solid #ccc;
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden; /* 画像が枠からはみ出ないように */
+            user-select: none;
+            transition: all 0.2s ease-in-out;
+            
+            /* 🔴 初期状態（未所持）：半透明＆白黒（グレー） */
+            opacity: 0.4;
+            filter: grayscale(100%);
+        }
+
+        /* 👑 カードホバー時（少し浮かせる演出） */
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        /* ✨ 所持している（クリックされた）ときのスタイル */
+        .card.owned {
+            opacity: 1;
+            filter: grayscale(0%); /* カラーに戻る */
+            border-color: #ff4081; /* ピンクの枠線 */
+            box-shadow: 0 6px 12px rgba(255, 64, 129, 0.4);
+        }
+
+        /* 🖼️ 画像を枠線ぴったりに収める設定 */
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 🏷️ レアリティバッジ（カードの左上に重ねて表示） */
+        .rarity-badge {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background-color: rgba(255, 64, 129, 0.9);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+/* 📦 全体のコンテナ（flexを解除して縦並びにします） */
+.card-container {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: left; /* 見出しを左寄せに */
+}
+
+/* 🏷️ 新しく追加：シリーズ名（見出し）のデザイン */
+.series-title {
+    font-size: 1.4rem;
+    color: #ff4081;
+    border-left: 5px solid #ff4081;
+    padding-left: 10px;
+    margin-top: 40px;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+/* 📦 新しく追加：シリーズごとのカードを並べる箱 */
+.card-group {
+    display: flex;
+    justify-content: flex-start; /* 左詰めで並べる */
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+    </style>
+</head>
+<body>
+
+    <h1>✨ マイ・カードチェッカー ✨</h1>
+    
+    <!-- 所持率を表示するメーター -->
+    <div class="counter">
+        所持： <span id="owned-count">0</span> / <span id="total-count">0</span> 種 
+        (<span id="percentage">0</span>%)
+    </div>
+
+    <!-- ここにJavaScriptでカードがドンドン追加されます -->
+    <div class="card-container" id="card-container"></div>
+
+    <script>
+// 画面のパーツ（要素）を取得
+const container = document.getElementById("card-container");
+const ownedCountEl = document.getElementById("owned-count");
+const totalCountEl = document.getElementById("total-count");
+const percentageEl = document.getElementById("percentage");
+
+// 📥 過去に保存したセーブデータを読み込む
+const savedOwnedIds = JSON.parse(localStorage.getItem("myCardCollection")) || [];
+
+// 🔥 エクセルで作ったCSVファイル（cards.csv）を読み込む処理
+fetch('cards.csv')
+    .then(response => response.text()) // ファイルをテキストとして読み込む
+    .then(csvText => {
+        // CSVのテキストを1行ずつバラバラに分解してデータ配列にする
+        const cardData = csvToObjects(csvText);
+        
+        // 全体の種類数を画面に設定
+        totalCountEl.textContent = cardData.length;
+
+        // 🛠️ 画面にカードを並べる処理（前回作ったグループ分けの処理）
+        let currentSeries = "";
+        let currentGroupContainer = null;
+
+        cardData.forEach(card => {
+            if (card.series !== currentSeries) {
+                currentSeries = card.series;
+                const heading = document.createElement("h2");
+                heading.classList.add("series-title");
+                heading.textContent = currentSeries;
+                container.appendChild(heading);
+                
+                currentGroupContainer = document.createElement("div");
+                currentGroupContainer.classList.add("card-group");
+                container.appendChild(currentGroupContainer);
+            }
+
+            const cardEl = document.createElement("div");
+            cardEl.classList.add("card");
+            cardEl.setAttribute("data-id", card.id);
+            
+            if (savedOwnedIds.includes(card.id)) {
+                cardEl.classList.add("owned");
+            }
+
+            cardEl.innerHTML = `
+                <span class="rarity-badge">${card.rarity}</span>
+                <img src="${card.image}" alt="${card.name}" class="card-img" title="${card.name}">
+            `;
+
+            cardEl.addEventListener("click", () => {
+                cardEl.classList.toggle("owned");
+                saveData();
+                styleUpdate();
+            });
+
+            currentGroupContainer.appendChild(cardEl);
+        });
+
+        // 読み込みが終わったら最初の所持率を計算
+        styleUpdate();
+    })
+    .catch(error => {
+        console.error("CSVファイルの読み込みに失敗しました:", error);
+        alert("cards.csv が見つからないか、読み込めませんでした。");
+    });
+
+
+// 📤 【セーブ機能】現在チェックがついているカードのIDを記憶する関数
+function saveData() {
+    const ownedCards = document.querySelectorAll(".card.owned");
+    const ownedIds = [];
+    ownedCards.forEach(card => {
+        ownedIds.push(card.getAttribute("data-id"));
+    });
+    localStorage.setItem("myCardCollection", JSON.stringify(ownedIds));
+}
+
+// 🧮 【計算機能】所持数とパーセンテージを計算して画面を更新する関数
+function styleUpdate() {
+    const ownedCount = document.querySelectorAll(".card.owned").length;
+    // 画面に表示されている全体の数（total-count）を取得して計算に使う
+    const totalCount = parseInt(totalCountEl.textContent) || 0;
+    const percent = Math.round((ownedCount / totalCount) * 100) || 0;
+
+    ownedCountEl.textContent = ownedCount;
+    percentageEl.textContent = percent;
+}
+
+// ⚙️ 【便利関数】CSVの文字列をプログラムで使える形式に変換する魔法のハコ
+function csvToObjects(csvText) {
+    const lines = csvText.trim().split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    const result = [];
+
+    for (let i = 1; i < lines.length; i++) {
+        if (!lines[i]) continue;
+        const currentLine = lines[i].split(',').map(v => v.trim());
+        const obj = {};
+        headers.forEach((header, index) => {
+            obj[header] = currentLine[index];
+        });
+        result.push(obj);
+    }
+    return result;
+}
+
+    </script>
+</body>
+</html>
