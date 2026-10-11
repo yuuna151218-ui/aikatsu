@@ -128,27 +128,51 @@
     margin-bottom: 20px;
 }
         
-/* 📱 スマホ画面（画面幅が600pxより小さい時）の設定 */
+/* 📱 スマホ画面（画面幅が600pxより小さい時）の3列表示決定版 */
 @media (max-width: 600px) {
-    /* 全体の余白を少し狭くして、3列が収まりやすくする */
     body {
         padding: 10px;
     }
     
-    /* シリーズごとのカードを並べる箱の隙間（gap）を少し狭くする */
-    .card-group {
-        gap: 8px;
-        justify-content: flex-start; /* 左詰めで並べる */
+    /* タブボタンの隙間をスマホ用に少し狭くする */
+    .tab-container {
+        gap: 6px;
+        margin-bottom: 15px;
+    }
+    
+    .tab-btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
     }
 
-    /* 🔥 ここが重要：カード1枚のサイズを3列用に自動計算する */
+    /* シリーズごとの見出し */
+    .series-title {
+        font-size: 1.1rem;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    /* 📦 ここがポイント：新しく作った「透明な親の箱」の横幅を100%に広げる */
+    .series-group-wrapper {
+        width: 100%;
+    }
+
+    /* 📦 カードを並べる箱の横幅も100%にして、左詰めに調整 */
+    .card-group {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start; 
+        gap: 8px; /* カードとカードの隙間を8pxにする */
+        flex-wrap: wrap;
+    }
+
+    /* 🔥 カード1枚のサイズをスマホ画面に合わせる */
     .card {
-        /* 画面幅から隙間（8px × 2箇所 = 16px）を引いた残りを3等分する計算 */
+        /* 画面の端の余白と隙間（8px × 2箇所 = 16px）を引いた残りをぴったり3等分する */
         width: calc((100% - 16px) / 3); 
-        /* 縦横比を綺麗に保つ（アイカツカードの比率に合わせる） */
         height: auto;
-        aspect-ratio: 120 / 170; 
-        border-width: 2px; /* スマホ用に枠線を少し細くする */
+        aspect-ratio: 120 / 170; /* 縦横比をキープ */
+        border-width: 2px;
     }
     
 /* 🏷️ タブボタンを並べるエリア */
