@@ -140,17 +140,19 @@
             border-radius: 4px;
             z-index: 10;
         }
-
-        @media screen and (max-width: 768px) {
-  /* カード一覧のグリッド部分を指定しているクラス名に合わせてください（例：.card-grid など） */
+        
+      @media screen and (max-width: 768px) {
+  /* クラス名が指定されていない場合などは、カードを包む親要素のクラス名やタグ名に変更してください */
+  .card-container, 
   .card-grid {
     grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important; /* カード同士の間隔が広すぎる場合は調整してください */
   }
-        /* 📱 スマホ画面（Galaxy S24 Ultraなどの高解像度スマホにも完全対応） */
-        @media (max-width: 1024px) {
-            body {
-                padding: 8px; /* 全体の余白を狭くする */
-            }
+  
+  /* カード自体のサイズやパディングを少し小さくする場合 */
+  .card {
+    padding: 4px !important;
+  }
             .tab-container {
                 gap: 6px;
                 margin-bottom: 15px;
