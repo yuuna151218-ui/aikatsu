@@ -140,7 +140,12 @@
             border-radius: 4px;
             z-index: 10;
         }
-        
+
+        @media screen and (max-width: 768px) {
+  /* カード一覧のグリッド部分を指定しているクラス名に合わせてください（例：.card-grid など） */
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
         /* 📱 スマホ画面（Galaxy S24 Ultraなどの高解像度スマホにも完全対応） */
         @media (max-width: 1024px) {
             body {
