@@ -114,6 +114,7 @@
             opacity: 0.4;
             filter: grayscale(100%);
             transition: all 0.2s ease-in-out;
+            box-sizing: border-box; /* 💡 幅計算にボーダーを含めるために追加 */
         }
 
         .card:hover {
@@ -146,7 +147,8 @@
             z-index: 10;
         }
 
-        @media screen and (max-width: 780px) {
+        /* 📱 スマホ用レスポンシブデザイン（768px以下） */
+        @media screen and (max-width: 768px) {
             .tab-container {
                 gap: 6px;
                 margin-bottom: 15px;
@@ -161,21 +163,18 @@
                 margin-bottom: 10px;
             }
             
-            /* 📦 箱の隙間を小さくして、カードを左詰めに固定する */
+            /* カードグループの隙間を狭くする */
             .card-group {
                 gap: 6px !important;
                 justify-content: flex-start !important;
-                display: flex !important;
-                flex-wrap: wrap !important;
-                width: 100% !important;
             }
             
-            /* 💡 端の余白とすき間を引いてピッタリ3等分する */
+            /* 💡 ピッタリ3列にする（隙間6px×2箇所＝12pxを全体から引いて3等分） */
             .card {
                 width: calc((100% - 12px) / 3) !important;
                 height: auto !important;
                 aspect-ratio: 120 / 170 !important;
-                border-width: 2px;
+                border-width: 2px !important;
             }
         }
     </style>
@@ -321,7 +320,6 @@
             const totalCards = allCards.length;
             const ownedCards = document.querySelectorAll(".card.owned").length;
 
-            // すでに全て持っていれば未所持に戻し、そうでなければ全て所持にする
             const shouldBeOwned = ownedCards < totalCards;
 
             allCards.forEach(card => {
