@@ -195,11 +195,7 @@
 
 <div class="counter">
     所持： <span id="owned-count">0</span> / <span id="total-count">0</span> 種 (<span id="percentage">0</span>%)
-</div>
-    
-    <div style="margin-bottom: 20px;">
-        <button id="select-all-btn" class="tab-btn">すべて所持にする</button>
-    </div>
+</div>>
 
 <div class="tab-container" id="tab-container"></div>
 <div class="card-container" id="card-container"></div>
@@ -281,7 +277,6 @@
                     cardEl.classList.toggle("owned");
                     saveData();
                     styleUpdate(cardData.length);
-                    updateSelectAllButtonText();
                 });
 
                 currentGroupContainer.appendChild(cardEl);
@@ -337,49 +332,6 @@
         percentageEl.textContent = Math.round((ownedCount / total) * 100) || 0;
     }
 
-    // 🔄 すべて選択・解除ボタンの処理
-        const selectAllBtn = document.getElementById("select-all-btn");
-
-        selectAllBtn.addEventListener("click", () => {
-            const allCards = document.querySelectorAll(".card");
-            const totalCards = allCards.length;
-            const ownedCards = document.querySelectorAll(".card.owned").length;
-
-            // すでに全部持っていなければ「全部持っている」に、持っていれば「全部リセット」にする
-            const shouldBeOwned = ownedCards < totalCards;
-
-            allCards.Item ? allCards.forEach(card => { // 配列風に処理
-                if (shouldBeOwned) {
-                    card.classList.add("owned");
-                } else {
-                    card.classList.remove("owned");
-                }
-            }) : null;
-
-            // 実際のループ処理（forEachが使えるようにNodeListを操作）
-            allCards.forEach(card => {
-                if (shouldBeOwned) {
-                    card.classList.add("owned");
-                } else {
-                    card.classList.remove("owned");
-                }
-            });
-
-            saveData();
-            styleUpdate(totalCards);
-            updateSelectAllButtonText();
-        });
-
-        // ボタンの文字を状態に合わせて切り替える関数
-        function updateSelectAllButtonText() {
-            const totalCards = document.querySelectorAll(".card").length;
-            const ownedCards = document.querySelectorAll(".card.owned").length;
-            if (ownedCards === totalCards && totalCards > 0) {
-                selectAllBtn.textContent = "すべて未所持に戻す";
-            } else {
-                selectAllBtn.textContent = "すべて所持にする";
-            }
-    
 </script>
 </body>
 </html>
