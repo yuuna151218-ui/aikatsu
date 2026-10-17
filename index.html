@@ -14,383 +14,355 @@
             margin: 0;
             padding: 20px;
         }
-            
-h1 {
-        font-size: 1.6rem;
-        color: #ff4081; /* アイカツ風ピンク */
-        margin-bottom: 10px;
-    }
-    
-    .counter {
-        font-size: 1.1rem;
-        background-color: white;
-        display: inline-block;
-        padding: 8px 18px;
-        border-radius: 30px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        margin-bottom: 15px;
-        font-weight: bold;
-    }
 
-    #percentage {
-        color: #ff4081;
-        font-size: 1.4rem;
-    }
-
-    /* 🔘 一括選択ボタンエリア */
-    .batch-action-container {
-        margin-bottom: 15px;
-    }
-
-    /* 🏷️ タブボタンエリア（チェッカー風デザイン） */
-    .tab-container {
-        display: flex;
-        justify-content: center;
-        gap: 6px;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-        max-width: 900px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .tab-btn {
-        background-color: #ffffff;
-        color: #ff4081;
-        border: 2px solid #ff4081;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-size: 0.85rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-
-    .tab-btn:hover {
-        background-color: #ffe4ec;
-    }
-
-    .tab-btn.active {
-        background-color: #ff4081;
-        color: white;
-        box-shadow: 0 3px 8px rgba(255, 64, 129, 0.4);
-    }
-
-    .series-group-wrapper {
-        display: block;
-        width: 100%;
-    }
-
-    .series-group-wrapper.hidden {
-        display: none;
-    }
-
-    .card-container {
-        max-width: 900px;
-        margin: 0 auto;
-        text-align: left;
-    }
-
-    .series-title {
-        font-size: 1.2rem;
-        color: #ff4081;
-        border-left: 5px solid #ff4081;
-        padding-left: 10px;
-        margin-top: 25px;
-        margin-bottom: 12px;
-    }
-
-    .card-group {
-        display: flex;
-        justify-content: flex-start;
-        gap: 15px;
-        flex-wrap: wrap;
-        margin-bottom: 20px;
-        width: 100%;
-    }
-
-    /* 🃏 パソコンでの基本カードサイズ */
-    .card {
-        width: 120px;
-        height: 170px;
-        background-color: #e0e0e0;
-        border: 3px solid #ccc;
-        border-radius: 10px;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        user-select: none;
-        opacity: 0.4;
-        filter: grayscale(100%);
-        transition: all 0.2s ease-in-out;
-        box-sizing: border-box;
-    }
-
-    .card:hover {
-        transform: translateY(-3px);
-    }
-
-    .card.owned {
-        opacity: 1;
-        filter: grayscale(0%);
-        border-color: #ff4081;
-        box-shadow: 0 6px 12px rgba(255, 64, 129, 0.4);
-    }
-
-    .card-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .rarity-badge {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        background-color: rgba(255, 64, 129, 0.9);
-        color: white;
-        font-size: 0.7rem;
-        font-weight: bold;
-        padding: 2px 6px;
-        border-radius: 4px;
-        z-index: 10;
-    }
-
-    /* 📱 スマホ用レスポンシブデザイン（768px以下） */
-    @media screen and (max-width: 768px) {
-        .tab-container {
-            gap: 5px;
-            margin-bottom: 15px;
-        }
-        .tab-btn {
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            border-radius: 16px;
-        }
-        .series-title {
-            font-size: 1.1rem;
-            margin-top: 20px;
+        h1 {
+            font-size: 1.8rem;
+            color: #ff4081; /* アイカツ風ピンク */
             margin-bottom: 10px;
         }
         
-        /* カードグループの隙間を狭くする */
+        .counter {
+            font-size: 1.3rem;
+            background-color: white;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        #percentage {
+            color: #ff4081;
+            font-size: 1.6rem;
+        }
+
+        /* 🔘 一括選択ボタンエリア */
+        .batch-action-container {
+            margin-bottom: 25px;
+        }
+
+        /* 🏷️ タブボタンエリア */
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background-color: white;
+            color: #ff4081;
+            border: 2px solid #ff4081;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background-color: #ff4081;
+            color: white;
+        }
+
+        .series-group-wrapper {
+            display: block;
+            width: 100%;
+        }
+
+        .series-group-wrapper.hidden {
+            display: none !important;
+        }
+
+        .card-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .series-title {
+            font-size: 1.4rem;
+            color: #ff4081;
+            border-left: 5px solid #ff4081;
+            padding-left: 10px;
+            margin-top: 40px;
+            margin-bottom: 15px;
+        }
+
         .card-group {
-            gap: 6px !important;
-            justify-content: flex-start !important;
+            display: flex;
+            justify-content: flex-start;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            width: 100%;
         }
-        
-        /* 💡 ピッタリ3列にする */
+
+        /* 🃏 パソコンでの基本カードサイズ */
         .card {
-            width: calc((100% - 12px) / 3) !important;
-            height: auto !important;
-            aspect-ratio: 120 / 170 !important;
-            border-width: 2px !important;
+            width: 120px;
+            height: 170px;
+            background-color: #e0e0e0;
+            border: 3px solid #ccc;
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            opacity: 0.4;
+            filter: grayscale(100%);
+            transition: all 0.2s ease-in-out;
+            box-sizing: border-box;
         }
-    }
-</style>
 
+        .card:hover {
+            transform: translateY(-3px);
+        }
 
-<h1>アイカツ！カード所持率チェッカー</h1>
+        .card.owned {
+            opacity: 1;
+            filter: grayscale(0%);
+            border-color: #ff4081;
+            box-shadow: 0 6px 12px rgba(255, 64, 129, 0.4);
+        }
 
-<div class="counter">
-    所持： <span id="owned-count">0</span> / <span id="total-count">0</span> 種 (<span id="percentage">0</span>%)
-</div>
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-<!-- 🔘 一括選択／一括解除ボタン -->
-<div class="batch-action-container">
-    <button id="select-all-btn" class="tab-btn">すべて所持にする</button>
-</div>
+        .rarity-badge {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background-color: rgba(255, 64, 129, 0.9);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            z-index: 10;
+        }
 
-<!-- 🏷️ タブ切り替えエリア -->
-<div class="tab-container" id="tab-container"></div>
-
-<!-- 🃏 カード表示エリア -->
-<div class="card-container" id="card-container"></div>
-
-<script>
-    const container = document.getElementById("card-container");
-    const tabContainer = document.getElementById("tab-container");
-    const ownedCountEl = document.getElementById("owned-count");
-    const totalCountEl = document.getElementById("total-count");
-    const percentageEl = document.getElementById("percentage");
-    const selectAllBtn = document.getElementById("select-all-btn");
-    
-    let savedOwnedIds = JSON.parse(localStorage.getItem("myCardCollection")) || [];
-    const seriesWrappers = [];
-    let currentSelectedTab = "すべて";
-
-    fetch('cards.csv')
-        .then(response => {
-            if (!response.ok) throw new Error('エラー');
-            return response.text();
-        })
-        .then(csvText => {
-            let cleanText = csvText.replace(/^\ufeff/, '').trim();
-            const lines = cleanText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-            if (lines.length < 2) return;
-
-            const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-            const cardData = [];
-
-            for (let i = 1; i < lines.length; i++) {
-                const currentLine = lines[i].split(',').map(v => v.trim());
-                if (currentLine.length < headers.length) continue;
-
-                const obj = {};
-                headers.forEach((header, index) => { obj[header] = currentLine[index]; });
-                cardData.push(obj);
+        /* 📱 スマホ用レスポンシブデザイン（768px以下） */
+        @media screen and (max-width: 768px) {
+            .tab-container {
+                gap: 6px;
+                margin-bottom: 15px;
             }
+            .tab-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+            .series-title {
+                font-size: 1.1rem;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+            
+            .card-group {
+                gap: 6px !important;
+                justify-content: flex-start !important;
+            }
+            
+            .card {
+                width: calc((100% - 12px) / 3) !important;
+                height: auto !important;
+                aspect-ratio: 120 / 170 !important;
+                border-width: 2px !important;
+            }
+        }
+    </style>
+</head>
+<body>
 
-            totalCountEl.textContent = cardData.length;
+    <h1>アイカツ！カードリスト</h1>
+    
+    <div class="counter">
+        所持： <span id="owned-count">0</span> / <span id="total-count">0</span> 種 (<span id="percentage">0</span>%)
+    </div>
 
-            let currentSeries = "";
-            let currentGroupContainer = null;
-            let currentWrapper = null;
+    <!-- ➕ すべて選択／解除ボタン -->
+    <div class="batch-action-container">
+        <button id="select-all-btn" class="tab-btn">すべて所持にする</button>
+    </div>
 
-            cardData.forEach(card => {
-                if (!card.series || !card.id) return;
+    <!-- 🏷️ タブボタンが自動生成されるエリア -->
+    <div class="tab-container" id="tab-container"></div>
+    <div class="card-container" id="card-container"></div>
 
-                if (card.series !== currentSeries) {
-                    currentSeries = card.series;
-                    
-                    currentWrapper = document.createElement("div");
-                    currentWrapper.classList.add("series-group-wrapper");
-                    currentWrapper.setAttribute("data-series", currentSeries);
-                    container.appendChild(currentWrapper);
-                    seriesWrappers.push(currentWrapper);
+    <script>
+        const container = document.getElementById("card-container");
+        const tabContainer = document.getElementById("tab-container");
+        const ownedCountEl = document.getElementById("owned-count");
+        const totalCountEl = document.getElementById("total-count");
+        const percentageEl = document.getElementById("percentage");
+        const selectAllBtn = document.getElementById("select-all-btn");
+        
+        let savedOwnedIds = JSON.parse(localStorage.getItem("myCardCollection")) || [];
+        const seriesWrappers = [];
 
-                    const heading = document.createElement("h2");
-                    heading.classList.add("series-title");
-                    heading.textContent = currentSeries;
-                    currentWrapper.appendChild(heading);
+        fetch('cards.csv')
+            .then(response => {
+                if (!response.ok) throw new Error('エラー');
+                return response.text();
+            })
+            .then(csvText => {
+                let cleanText = csvText.replace(/^\ufeff/, '').trim();
+                const lines = cleanText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+                if (lines.length < 2) return;
 
-                    currentGroupContainer = document.createElement("div");
-                    currentGroupContainer.classList.add("card-group");
-                    currentWrapper.appendChild(currentGroupContainer);
+                const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+                const cardData = [];
+
+                for (let i = 1; i < lines.length; i++) {
+                    const currentLine = lines[i].split(',').map(v => v.trim());
+                    if (currentLine.length < headers.length) continue;
+
+                    const obj = {};
+                    headers.forEach((header, index) => { obj[header] = currentLine[index]; });
+                    cardData.push(obj);
                 }
 
-                const cardEl = document.createElement("div");
-                cardEl.classList.add("card");
-                cardEl.setAttribute("data-id", card.id);
+                totalCountEl.textContent = cardData.length;
 
-                if (savedOwnedIds.includes(card.id)) {
-                    cardEl.classList.add("owned");
-                }
+                let currentSeries = "";
+                let currentGroupContainer = null;
+                let currentWrapper = null;
 
-                cardEl.innerHTML = `
-                    <span class="rarity-badge">${card.rarity || 'N'}</span>
-                    <img src="${card.image}" alt="${card.name}" class="card-img" title="${card.name}">
-                `;
+                cardData.forEach(card => {
+                    if (!card.series || !card.id) return;
 
-                cardEl.addEventListener("click", () => {
-                    cardEl.classList.toggle("owned");
-                    saveData();
-                    styleUpdate(cardData.length);
-                    updateSelectAllButtonText();
+                    if (card.series !== currentSeries) {
+                        currentSeries = card.series;
+                        
+                        currentWrapper = document.createElement("div");
+                        currentWrapper.classList.add("series-group-wrapper");
+                        currentWrapper.setAttribute("data-series", currentSeries);
+                        container.appendChild(currentWrapper);
+                        seriesWrappers.push(currentWrapper);
+
+                        const heading = document.createElement("h2");
+                        heading.classList.add("series-title");
+                        heading.textContent = currentSeries;
+                        currentWrapper.appendChild(heading);
+
+                        currentGroupContainer = document.createElement("div");
+                        currentGroupContainer.classList.add("card-group");
+                        currentWrapper.appendChild(currentGroupContainer);
+                    }
+
+                    const cardEl = document.createElement("div");
+                    cardEl.classList.add("card");
+                    cardEl.setAttribute("data-id", card.id);
+
+                    if (savedOwnedIds.includes(card.id)) {
+                        cardEl.classList.add("owned");
+                    }
+
+                    cardEl.innerHTML = `
+                        <span class="rarity-badge">${card.rarity || 'N'}</span>
+                        <img src="${card.image}" alt="${card.name}" class="card-img" title="${card.name}">
+                    `;
+
+                    cardEl.addEventListener("click", () => {
+                        cardEl.classList.toggle("owned");
+                        saveData();
+                        styleUpdate(cardData.length);
+                        updateSelectAllButtonText();
+                    });
+
+                    currentGroupContainer.appendChild(cardEl);
                 });
 
-                currentGroupContainer.appendChild(cardEl);
+                createTabs();
+                styleUpdate(cardData.length);
+                updateSelectAllButtonText();
             });
 
-            createTabs();
-            styleUpdate(cardData.length);
+        // 🏷️ タブを動的に生成する関数
+        function createTabs() {
+            // 既存のタブをクリア
+            tabContainer.innerHTML = "";
+
+            // 「すべて」ボタン
+            const allBtn = document.createElement("button");
+            allBtn.classList.add("tab-btn", "active");
+            allBtn.textContent = "すべて";
+            allBtn.addEventListener("click", () => switchTab("すべて", allBtn));
+            tabContainer.appendChild(allBtn);
+
+            // CSVから読み込まれたシリーズ名を元にタブボタンを作成
+            seriesWrappers.forEach(wrapper => {
+                const name = wrapper.getAttribute("data-series");
+                const btn = document.createElement("button");
+                btn.classList.add("tab-btn");
+                btn.textContent = name;
+                btn.addEventListener("click", () => switchTab(name, btn));
+                tabContainer.appendChild(btn);
+            });
+        }
+
+        // 🔀 タブ切り替え処理
+        function switchTab(selected, clickedBtn) {
+            document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+            clickedBtn.classList.add("active");
+
+            seriesWrappers.forEach(wrapper => {
+                if (selected === "すべて" || wrapper.getAttribute("data-series") === selected) {
+                    wrapper.classList.remove("hidden");
+                } else {
+                    wrapper.classList.add("hidden");
+                }
+            });
+        }
+
+        selectAllBtn.addEventListener("click", () => {
+            const allCards = document.querySelectorAll(".card");
+            const totalCards = allCards.length;
+            const ownedCards = document.querySelectorAll(".card.owned").length;
+
+            const shouldBeOwned = ownedCards < totalCards;
+
+            allCards.forEach(card => {
+                if (shouldBeOwned) {
+                    card.classList.add("owned");
+                } else {
+                    card.classList.remove("owned");
+                }
+            });
+
+            saveData();
+            styleUpdate(totalCards);
             updateSelectAllButtonText();
         });
 
-    function createTabs() {
-        tabContainer.innerHTML = "";
-        const seriesList = seriesWrappers.map(w => w.getAttribute("data-series"));
-
-        // 「すべて」タブを追加
-        const allBtn = document.createElement("button");
-        allBtn.classList.add("tab-btn", "active");
-        allBtn.textContent = "すべて";
-        allBtn.addEventListener("click", () => switchTab("すべて", allBtn));
-        tabContainer.appendChild(allBtn);
-
-        // 各弾・シリーズのタブを追加
-        seriesList.forEach(name => {
-            const btn = document.createElement("button");
-            btn.classList.add("tab-btn");
-            btn.textContent = name;
-            btn.addEventListener("click", () => switchTab(name, btn));
-            tabContainer.appendChild(btn);
-        });
-    }
-
-    function switchTab(selected, clickedBtn) {
-        currentSelectedTab = selected;
-        document.querySelectorAll(".tab-container .tab-btn").forEach(btn => btn.classList.remove("active"));
-        clickedBtn.classList.add("active");
-
-        seriesWrappers.forEach(wrapper => {
-            if (selected === "すべて" || wrapper.getAttribute("data-series") === selected) {
-                wrapper.classList.remove("hidden");
+        function updateSelectAllButtonText() {
+            const totalCards = document.querySelectorAll(".card").length;
+            const ownedCards = document.querySelectorAll(".card.owned").length;
+            if (ownedCards === totalCards && totalCards > 0) {
+                selectAllBtn.textContent = "すべて未所持に戻す";
             } else {
-                wrapper.classList.add("hidden");
+                selectAllBtn.textContent = "すべて所持にする";
             }
-        });
-
-        updateSelectAllButtonText();
-    }
-
-    // 🔄 一括選択・解除ボタンの動作（表示中のタブカードを対象に選択/解除）
-    selectAllBtn.addEventListener("click", () => {
-        const visibleCards = getVisibleCards();
-        const totalVisible = visibleCards.length;
-        const ownedVisible = visibleCards.filter(card => card.classList.contains("owned")).length;
-
-        const shouldBeOwned = ownedVisible < totalVisible;
-
-        visibleCards.forEach(card => {
-            if (shouldBeOwned) {
-                card.classList.add("owned");
-            } else {
-                card.classList.remove("owned");
-            }
-        });
-
-        saveData();
-        styleUpdate(document.querySelectorAll(".card").length);
-        updateSelectAllButtonText();
-    });
-
-    // 現在表示されているタブ内のカードを取得
-    function getVisibleCards() {
-        if (currentSelectedTab === "すべて") {
-            return Array.from(document.querySelectorAll(".card"));
         }
-        const activeWrapper = document.querySelector(`.series-group-wrapper[data-series="${currentSelectedTab}"]`);
-        return activeWrapper ? Array.from(activeWrapper.querySelectorAll(".card")) : [];
-    }
 
-    // ボタンの文字を表示中のタブ状態に合わせて変更
-    function updateSelectAllButtonText() {
-        const visibleCards = getVisibleCards();
-        const totalVisible = visibleCards.length;
-        const ownedVisible = visibleCards.filter(card => card.classList.contains("owned")).length;
-
-        if (totalVisible > 0 && ownedVisible === totalVisible) {
-            selectAllBtn.textContent = currentSelectedTab === "すべて" ? "すべて未所持に戻す" : `[${currentSelectedTab}] を未所持に戻す`;
-        } else {
-            selectAllBtn.textContent = currentSelectedTab === "すべて" ? "すべて所持にする" : `[${currentSelectedTab}] を所持にする`;
+        function saveData() {
+            const owned = [];
+            document.querySelectorAll(".card.owned").forEach(card => {
+                owned.push(card.getAttribute("data-id"));
+            });
+            localStorage.setItem("myCardCollection", JSON.stringify(owned));
         }
-    }
 
-    // 📤 セーブ保存する関数
-    function saveData() {
-        const owned = [];
-        document.querySelectorAll(".card.owned").forEach(card => {
-            owned.push(card.getAttribute("data-id"));
-        });
-        localStorage.setItem("myCardCollection", JSON.stringify(owned));
-    }
-
-    // 🧮 パーセンテージを計算する関数
-    function styleUpdate(total) {
-        const ownedCount = document.querySelectorAll(".card.owned").length;
-        ownedCountEl.textContent = ownedCount;
-        percentageEl.textContent = Math.round((ownedCount / total) * 100) || 0;
-    }
-</script>
+        function styleUpdate(total) {
+            const ownedCount = document.querySelectorAll(".card.owned").length;
+            ownedCountEl.textContent = ownedCount;
+            percentageEl.textContent = Math.round((ownedCount / total) * 100) || 0;
+        }
+    </script>
+</body>
+</html>
