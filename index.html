@@ -37,6 +37,27 @@
             font-size: 1.5rem;
         }
 
+        /* 🔎 検索ボックスエリア */
+        .search-container {
+            margin-bottom: 12px;
+        }
+
+        .search-input {
+            width: 80%;
+            max-width: 350px;
+            padding: 8px 16px;
+            font-size: 0.95rem;
+            border: 2px solid #ff4081;
+            border-radius: 20px;
+            outline: none;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 8px rgba(255, 64, 129, 0.4);
+        }
+
         /* 🔘 ボタンエリア */
         .action-container {
             display: flex;
@@ -70,7 +91,7 @@
         }
 
         .tab-container {
-            display: none; /* 初期状態は非表示 */
+            display: none;
             background-color: white;
             border: 2px solid #ff4081;
             border-radius: 12px;
@@ -83,7 +104,7 @@
         }
 
         .tab-container.open {
-            display: flex; /* 「表示」タップで展開 */
+            display: flex;
         }
 
         .tab-btn {
@@ -153,6 +174,10 @@
             box-sizing: border-box;
         }
 
+        .card.hidden-search {
+            display: none !important;
+        }
+
         .card:hover {
             transform: translateY(-3px);
         }
@@ -183,7 +208,7 @@
             z-index: 10;
         }
 
-        /* 📱 スマホ用レスポンシブデザイン（768px以下・3列表示をしっかり維持） */
+        /* 📱 スマホ用レスポンシブデザイン（768px以下・3列表示維持） */
         @media screen and (max-width: 768px) {
             .card-group {
                 gap: 6px !important;
@@ -207,7 +232,12 @@
         所持： <span id="owned-count">0</span> / <span id="total-count">0</span> 種 (<span id="percentage">0</span>%)
     </div>
 
-    <!-- 🔘 ボタンエリア（「表示」ボタンと「すべて所持」ボタン） -->
+    <!-- 🔎 検索入力エリア -->
+    <div class="search-container">
+        <input type="text" id="search-input" class="search-input" placeholder="🔍 カード名・ID・レア度で検索...">
+    </div>
+
+    <!-- 🔘 ボタンエリア -->
     <div class="action-container">
         <button id="toggle-menu-btn" class="action-btn">🔍 表示：すべて ▼</button>
         <button id="select-all-btn" class="action-btn">すべて所持にする</button>
@@ -224,6 +254,7 @@
         const container = document.getElementById("card-container");
         const tabContainer = document.getElementById("tab-container");
         const toggleMenuBtn = document.getElementById("toggle-menu-btn");
+        const searchInput = document.getElementById("search-input");
         const ownedCountEl = document.getElementById("owned-count");
         const totalCountEl = document.getElementById("total-count");
         const percentageEl = document.getElementById("percentage");
@@ -290,6 +321,8 @@
                     const cardEl = document.createElement("div");
                     cardEl.classList.add("card");
                     cardEl.setAttribute("data-id", card.id);
+                    cardEl.setAttribute("data-name", card.name || "");
+                    cardEl.setAttribute("data-rarity", card.rarity || "");
 
                     if (savedOwnedIds.includes(card.id)) {
                         cardEl.classList.add("owned");
@@ -315,18 +348,44 @@
                 updateSelectAllButtonText();
             });
 
-        // 🏷️ タブをメニュー内に生成する関数
+        // 🔎 リアルタイム検索の処理
+        searchInput.addEventListener("input", (e) => {
+            const keyword = e.target.value.toLowerCase().trim();
+            const cards = document.querySelectorAll(".card");
+
+            cards.forEach(card => {
+                const id = card.getAttribute("data-id").toLowerCase();
+                const name = card.getAttribute("data-name").toLowerCase();
+                const rarity = card.getAttribute("data-rarity").toLowerCase();
+
+                if (id.includes(keyword) || name.includes(keyword) || rarity.includes(keyword)) {
+                    card.classList.remove("hidden-search");
+                } else {
+                    card.classList.add("hidden-search");
+                }
+            });
+
+            // 検索結果がないシリーズの見出しを非表示にする
+            seriesWrappers.forEach(wrapper => {
+                const visibleCards = wrapper.querySelectorAll(".card:not(.hidden-search)");
+                if (visibleCards.length === 0) {
+                    wrapper.classList.add("hidden");
+                } else {
+                    wrapper.classList.remove("hidden");
+                }
+            });
+        });
+
+        // 🏷️ タブ生成関数
         function createTabs() {
             tabContainer.innerHTML = "";
 
-            // 「すべて」ボタン
             const allBtn = document.createElement("button");
             allBtn.classList.add("tab-btn", "active");
             allBtn.textContent = "すべて";
             allBtn.addEventListener("click", () => switchTab("すべて", allBtn));
             tabContainer.appendChild(allBtn);
 
-            // CSVのシリーズ名をもとにタブボタン作成
             seriesWrappers.forEach(wrapper => {
                 const name = wrapper.getAttribute("data-series");
                 const btn = document.createElement("button");
@@ -342,8 +401,10 @@
             document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
             clickedBtn.classList.add("active");
 
-            // メニューボタンのラベルを現在選択中のシリーズに変更
             toggleMenuBtn.textContent = `🔍 表示：${selected} ▼`;
+            searchInput.value = ""; // タブ変更時は検索をクリア
+
+            document.querySelectorAll(".card").forEach(c => c.classList.remove("hidden-search"));
 
             seriesWrappers.forEach(wrapper => {
                 if (selected === "すべて" || wrapper.getAttribute("data-series") === selected) {
@@ -353,7 +414,6 @@
                 }
             });
 
-            // 選択したらタブメニューを閉じる
             tabContainer.classList.remove("open");
         }
 
