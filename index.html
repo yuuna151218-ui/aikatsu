@@ -401,7 +401,7 @@
             document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
             clickedBtn.classList.add("active");
 
-            toggleMenuBtn.textContent = `🔍 表示：${selected} ▼`;
+            toggleMenuBtn.textContent = `表示：${selected} ▼`;
             searchInput.value = ""; // タブ変更時は検索をクリア
 
             document.querySelectorAll(".card").forEach(c => c.classList.remove("hidden-search"));
