@@ -12,7 +12,7 @@
             background-color: #fff0f5; /* 淡いピンクの背景 */
             color: #333;
             margin: 0;
-            padding: 20px;
+            padding: 20px 10px;
         }
 
         h1 {
@@ -22,10 +22,10 @@
         }
         
         .counter {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             background-color: white;
             display: inline-block;
-            padding: 10px 20px;
+            padding: 8px 18px;
             border-radius: 30px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             margin-bottom: 15px;
@@ -34,29 +34,65 @@
 
         #percentage {
             color: #ff4081;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
         }
 
-        /* 🔘 一括選択ボタンエリア */
-        .batch-action-container {
-            margin-bottom: 25px;
-        }
-
-        /* 🏷️ タブボタンエリア */
-        .tab-container {
+        /* 🔘 ボタンエリア */
+        .action-container {
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             flex-wrap: wrap;
         }
 
-        .tab-btn {
+        .action-btn {
             background-color: white;
             color: #ff4081;
             border: 2px solid #ff4081;
             padding: 8px 16px;
             border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .action-btn:hover, .action-btn.active {
+            background-color: #ff4081;
+            color: white;
+        }
+
+        /* 🏷️ 「表示」メニュー（アコーディオン） */
+        .display-menu-wrapper {
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+        }
+
+        .tab-container {
+            display: none; /* 初期状態は非表示 */
+            background-color: white;
+            border: 2px solid #ff4081;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 8px;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .tab-container.open {
+            display: flex; /* 「表示」タップで展開 */
+        }
+
+        .tab-btn {
+            background-color: #fff0f5;
+            color: #ff4081;
+            border: 1px solid #ff4081;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
@@ -83,12 +119,12 @@
         }
 
         .series-title {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             color: #ff4081;
             border-left: 5px solid #ff4081;
             padding-left: 10px;
-            margin-top: 40px;
-            margin-bottom: 15px;
+            margin-top: 30px;
+            margin-bottom: 12px;
         }
 
         .card-group {
@@ -147,22 +183,8 @@
             z-index: 10;
         }
 
-        /* 📱 スマホ用レスポンシブデザイン（768px以下） */
+        /* 📱 スマホ用レスポンシブデザイン（768px以下・3列表示をしっかり維持） */
         @media screen and (max-width: 768px) {
-            .tab-container {
-                gap: 6px;
-                margin-bottom: 15px;
-            }
-            .tab-btn {
-                padding: 6px 12px;
-                font-size: 0.85rem;
-            }
-            .series-title {
-                font-size: 1.1rem;
-                margin-top: 20px;
-                margin-bottom: 10px;
-            }
-            
             .card-group {
                 gap: 6px !important;
                 justify-content: flex-start !important;
@@ -185,18 +207,23 @@
         所持： <span id="owned-count">0</span> / <span id="total-count">0</span> 種 (<span id="percentage">0</span>%)
     </div>
 
-    <!-- ➕ すべて選択／解除ボタン -->
-    <div class="batch-action-container">
-        <button id="select-all-btn" class="tab-btn">すべて所持にする</button>
+    <!-- 🔘 ボタンエリア（「表示」ボタンと「すべて所持」ボタン） -->
+    <div class="action-container">
+        <button id="toggle-menu-btn" class="action-btn">🔍 表示：すべて ▼</button>
+        <button id="select-all-btn" class="action-btn">すべて所持にする</button>
     </div>
 
-    <!-- 🏷️ タブボタンが自動生成されるエリア -->
-    <div class="tab-container" id="tab-container"></div>
+    <!-- 🏷️ 「表示」メニュー（タブ選択ドロップダウン） -->
+    <div class="display-menu-wrapper">
+        <div class="tab-container" id="tab-container"></div>
+    </div>
+
     <div class="card-container" id="card-container"></div>
 
     <script>
         const container = document.getElementById("card-container");
         const tabContainer = document.getElementById("tab-container");
+        const toggleMenuBtn = document.getElementById("toggle-menu-btn");
         const ownedCountEl = document.getElementById("owned-count");
         const totalCountEl = document.getElementById("total-count");
         const percentageEl = document.getElementById("percentage");
@@ -204,6 +231,11 @@
         
         let savedOwnedIds = JSON.parse(localStorage.getItem("myCardCollection")) || [];
         const seriesWrappers = [];
+
+        // 「表示」ボタンでメニューの開閉を切替
+        toggleMenuBtn.addEventListener("click", () => {
+            tabContainer.classList.toggle("open");
+        });
 
         fetch('cards.csv')
             .then(response => {
@@ -283,9 +315,8 @@
                 updateSelectAllButtonText();
             });
 
-        // 🏷️ タブを動的に生成する関数
+        // 🏷️ タブをメニュー内に生成する関数
         function createTabs() {
-            // 既存のタブをクリア
             tabContainer.innerHTML = "";
 
             // 「すべて」ボタン
@@ -295,7 +326,7 @@
             allBtn.addEventListener("click", () => switchTab("すべて", allBtn));
             tabContainer.appendChild(allBtn);
 
-            // CSVから読み込まれたシリーズ名を元にタブボタンを作成
+            // CSVのシリーズ名をもとにタブボタン作成
             seriesWrappers.forEach(wrapper => {
                 const name = wrapper.getAttribute("data-series");
                 const btn = document.createElement("button");
@@ -311,6 +342,9 @@
             document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
             clickedBtn.classList.add("active");
 
+            // メニューボタンのラベルを現在選択中のシリーズに変更
+            toggleMenuBtn.textContent = `🔍 表示：${selected} ▼`;
+
             seriesWrappers.forEach(wrapper => {
                 if (selected === "すべて" || wrapper.getAttribute("data-series") === selected) {
                     wrapper.classList.remove("hidden");
@@ -318,6 +352,9 @@
                     wrapper.classList.add("hidden");
                 }
             });
+
+            // 選択したらタブメニューを閉じる
+            tabContainer.classList.remove("open");
         }
 
         selectAllBtn.addEventListener("click", () => {
